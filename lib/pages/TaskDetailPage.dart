@@ -58,7 +58,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                 icon: Icon(
                   Icons.group,
                 ),
-                iconSize: 10,
+                iconSize: 15,
                 color: Constants.kPrimaryColor,
                 onPressed: () {},
               ),
@@ -69,7 +69,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                 icon: Icon(
                   Icons.chat_bubble,
                 ),
-                iconSize: 10,
+                iconSize: 15,
                 color: Constants.kPrimaryColor,
                 onPressed: () {},
               ),
@@ -80,7 +80,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                 icon: Icon(
                   Icons.transit_enterexit,
                 ),
-                iconSize: 10,
+                iconSize: 15,
                 color: Constants.kPrimaryColor,
                 onPressed: () {},
               ),

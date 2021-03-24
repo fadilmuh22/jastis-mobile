@@ -315,6 +315,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.black,
                       ),
                 ),
+                SizedBox(height: 10),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Convallis quis ac id blandit nibh rhoncus platea. Amet tellus, blandit viverra tincidunt ipsum ut. Tincidunt ipsum arcu aliquam eget ultricies a.',
                   style: Theme.of(context).textTheme.subtitle1,
@@ -435,7 +436,7 @@ class _HomePageState extends State<HomePage> {
       child: Consumer(builder: (context, watch, child) {
         final tasks = watch(taskProvider);
         return SizedBox(
-          height: 220,
+          height: 230,
           child: ListView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.only(bottom: 10),
