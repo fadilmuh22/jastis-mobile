@@ -24,5 +24,3 @@ class ClassNotifier extends ChangeNotifier {
 
   List<ClassModel> get classes => _classes;
 }
-
-final classProvider = ChangeNotifierProvider((_) => ClassNotifier());

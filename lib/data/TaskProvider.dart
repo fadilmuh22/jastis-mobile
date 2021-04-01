@@ -34,5 +34,3 @@ class TaskNotifier extends ChangeNotifier {
 
   List<BaseTaskEventModel> get tasks => _tasks;
 }
-
-final taskProvider = ChangeNotifierProvider((_) => TaskNotifier());

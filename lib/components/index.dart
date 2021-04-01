@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:jastis/models/models.dart';
-import 'package:jastis/pages/pages.dart';
+part of 'components.dart';
 
 class TaskOrEvent {
   static final TASK = Colors.blue;
@@ -33,110 +31,6 @@ class Drawhorizontalline extends CustomPainter {
   }
 }
 
-Widget getSeparateDivider(String text) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      CustomPaint(painter: Drawhorizontalline(true)),
-      Text(
-        text,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      CustomPaint(painter: Drawhorizontalline(false))
-    ],
-  );
-}
-
-Widget taskEventItem(BaseTaskEventModel base) {
-  return SizedBox(
-    height: 120,
-    child: Card(
-      color: base is TaskModel ? Colors.blue : Colors.yellow,
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              child: Container(
-                child: Text(
-                  base.title,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Container(
-                    child: Text(
-                      base.fromClass,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: Container(
-                    child: Text(
-                      base.endDate,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-Widget classItem(ClassModel classModel) {
-  return SizedBox(
-    height: 120,
-    child: Card(
-      color: Colors.blueGrey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Container(
-              child: Text(
-                '${classModel.title}\n${classModel.subtitle}',
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Container(
-                  child: Text(
-                    classModel.owner,
-                  ),
-                ),
-              ),
-              Flexible(
-                child: Container(
-                  child: Text(
-                    classModel.day,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 Widget noItems(String itemName) {
   return Container(
     child: Center(
@@ -165,6 +59,15 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
+  final AuthController _auth = AuthController.to;
+  UserModel _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = _auth.user.value;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
@@ -197,8 +100,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                   dense: true,
                                   contentPadding: EdgeInsets.zero,
                                   leading: CircleAvatar(),
-                                  title: Text('Fadil Muh'),
-                                  subtitle: Text('fadilmuh2002@gmail.com'),
+                                  title: Text('${_user.name}'),
+                                  subtitle: Text('${_user.email}'),
                                   onTap: () {},
                                 ),
                               ),
@@ -217,25 +120,25 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               padding: EdgeInsets.only(left: 4),
                               child: Column(
                                 children: [
-                                  ListTile(
-                                    dense: true,
-                                    contentPadding:
-                                        EdgeInsets.symmetric(horizontal: 6),
-                                    leading: CircleAvatar(),
-                                    title: Text(
-                                      'Basis Data',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .caption
-                                          .copyWith(fontSize: 11),
-                                    ),
-                                    subtitle: Text(
-                                      'Today',
-                                      style:
-                                          Theme.of(context).textTheme.subtitle2,
-                                    ),
-                                    onTap: () {},
-                                  ),
+                                  _user.kelas == null || _user.kelas.isEmpty
+                                      ? Container(
+                                          height: 36,
+                                          child: Center(
+                                            child: Text(
+                                              'You haven\'t join any class yet',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle1,
+                                            ),
+                                          ),
+                                        )
+                                      : ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: _user.kelas.length,
+                                          itemBuilder: (context, index) {
+                                            return _listTileKelas(context);
+                                          },
+                                        ),
                                 ],
                               ),
                             ),
@@ -282,6 +185,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
         ),
       ),
+    );
+  }
+
+  ListTile _listTileKelas(BuildContext context) {
+    return ListTile(
+      dense: true,
+      contentPadding: EdgeInsets.symmetric(horizontal: 6),
+      leading: CircleAvatar(),
+      title: Text(
+        'Basis Data',
+        style: Theme.of(context).textTheme.caption.copyWith(fontSize: 11),
+      ),
+      subtitle: Text(
+        'Today',
+        style: Theme.of(context).textTheme.subtitle2,
+      ),
+      onTap: () {},
     );
   }
 }

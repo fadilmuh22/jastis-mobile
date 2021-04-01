@@ -78,7 +78,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
                 icon: Icon(
-                  Icons.transit_enterexit,
+                  Icons.exit_to_app,
                 ),
                 iconSize: 15,
                 color: Constants.kPrimaryColor,

@@ -6,6 +6,8 @@ class IntroPage extends StatefulWidget {
 }
 
 class _IntroPageState extends State<IntroPage> {
+  final store = GetStorage();
+
   List<Slide> _slides = [];
   TextStyle _titleStyle = TextStyle(
     color: Colors.black,
@@ -64,14 +66,11 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, watch, child) {
-      final storage = watch(storageProvider);
-      return IntroSlider(
-        slides: this._slides,
-        onDonePress: () => this.onDonePress(context,
-            () async => await storage.write(key: 'intro', value: 'seen')),
-        backgroundColorAllSlides: Colors.white,
-      );
-    });
+    return IntroSlider(
+      slides: this._slides,
+      onDonePress: () => this
+          .onDonePress(context, () async => await store.write('intro', 'seen')),
+      backgroundColorAllSlides: Colors.white,
+    );
   }
 }

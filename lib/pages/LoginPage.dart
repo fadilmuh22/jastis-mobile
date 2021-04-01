@@ -6,6 +6,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final store = GetStorage();
+  final _formKey = GlobalKey<FormState>();
+  final AuthController _auth = AuthController.to;
+
+  Future _login(context) async {
+    ResponseModel<UserModel> response = await _auth.login(context);
+    if (response.success) {
+      store.write('user', json.encode(response.data));
+      store.write('token', response.token);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MainTabPage()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,69 +40,100 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
           SizedBox(height: 40),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Username',
-                style: Theme.of(context).textTheme.caption,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Email',
+                      style: Theme.of(context).textTheme.caption,
                     ),
-                  ),
-                  filled: true,
-                  fillColor: Color(0xFFE5E5E5),
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 17),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Password',
-                style: Theme.of(context).textTheme.caption,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: Color(0xFFE5E5E5),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Forgot your password?',
-                      style: TextStyle(
-                        color: Color(0xFF624D9E),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
+                    TextFormField(
+                      controller: _auth.emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFE5E5E5),
                       ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .caption
+                          .copyWith(fontSize: 12),
+                    )
+                  ],
+                ),
+                SizedBox(height: 17),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Password',
+                      style: Theme.of(context).textTheme.caption,
                     ),
-                    style: ButtonStyle(
-                      alignment: Alignment.centerRight,
+                    TextFormField(
+                      controller: _auth.passwordController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFE5E5E5),
+                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .caption
+                          .copyWith(fontSize: 12),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    SizedBox(height: 8),
+                    Obx(() {
+                      return Text(
+                        '${_auth.valMsg.value}',
+                        style: Theme.of(context).textTheme.caption.copyWith(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                      );
+                    }),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Forgot your password?',
+                            style: TextStyle(
+                              color: Color(0xFF624D9E),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            alignment: Alignment.centerRight,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           SizedBox(height: Constants.kDefaultPadding),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              _login(context);
+            },
             child: Text(
               'Login',
               style: TextStyle(
@@ -122,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 onPressed: () {
                   Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
+                      MaterialPageRoute(builder: (context) => MainTabPage()));
                 },
               ),
             ],

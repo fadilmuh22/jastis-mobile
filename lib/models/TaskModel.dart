@@ -14,4 +14,14 @@ class TaskModel extends BaseTaskEventModel {
           endDate: endDate,
           fromClass: fromClass,
         );
+
+  factory TaskModel.fromJson(json) {
+    return TaskModel(
+      title: json['title'],
+      desc: json['body'],
+      startDate: json['title'],
+      endDate: json['title'],
+      fromClass: json['title'],
+    );
+  }
 }

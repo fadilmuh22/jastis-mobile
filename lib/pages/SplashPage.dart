@@ -6,6 +6,8 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  final store = GetStorage();
+  final AuthController _auth = AuthController.to;
   final splashDelay = 1;
 
   @override
@@ -21,13 +23,25 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void navigationPage() async {
-    String intro = await storage.read(key: 'intro') ?? 'none';
+    String intro = await store.read('intro') ?? 'none';
     if (intro == 'none') {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => IntroPage()));
     } else {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+      var userString = await store.read('user');
+      if (json != null) {
+        UserModel user = UserModel.fromJson(json.decode(userString));
+        _auth.user.value = user;
+        ApiJastis.setAuthToken(await store.read('token'));
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => MainTabPage()));
+      } else {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+      }
     }
   }
 
@@ -52,12 +66,15 @@ class _SplashPageState extends State<SplashPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
-                        'Permudah proses belajar kapan saja, dimana saja.',
-                        style: TextStyle(
-                          color: Color(0xFF624D9E).withOpacity(.55),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                      Container(
+                        height: 20,
+                        child: Text(
+                          'Permudah proses belajar kapan saja, dimana saja.',
+                          style: TextStyle(
+                            color: Color(0xFF624D9E).withOpacity(.55),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
