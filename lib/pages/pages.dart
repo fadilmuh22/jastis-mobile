@@ -13,14 +13,15 @@ import 'package:jastis/controllers/controllers.dart';
 import 'package:jastis/data/data.dart';
 import 'package:jastis/models/models.dart';
 
-part 'SplashPage.dart';
-part 'IntroPage.dart';
-part 'LoginPage.dart';
+part 'auth/SplashPage.dart';
+part 'auth/IntroPage.dart';
+part 'auth/LoginPage.dart';
+part 'auth/RegisterPage.dart';
 
 part './main/MainTabPage.dart';
 part './main/HomePage.dart';
 part './main/ListPage.dart';
 
-part 'CreatePage.dart';
-part 'TaskDetailPage.dart';
-part 'NotificationsPage.dart';
+part 'main/CreatePage.dart';
+part 'main/TaskDetailPage.dart';
+part 'main/NotificationsPage.dart';

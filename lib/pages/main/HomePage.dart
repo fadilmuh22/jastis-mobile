@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: days[index] == today
-                                  ? Color(0xFF624D9E)
+                                  ? Constants.kPrimaryColor
                                   : Color(0xFFD8CFF2),
                               fontSize: 15,
                               fontWeight: FontWeight.w600,

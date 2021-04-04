@@ -10,8 +10,6 @@ class _ListPageState extends State<ListPage>
   int _tabIndex = 0;
   TabController _tabController;
 
-  DateTime _selectedDate = DateTime.now();
-
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
@@ -37,20 +35,6 @@ class _ListPageState extends State<ListPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   foregroundColor: Color(0xFF5E5454),
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.arrow_back, color: Colors.black),
-      //     onPressed: () => Navigator.of(context).pop(),
-      //   ),
-      //   title: Text(
-      //     'List',
-      //     style: Theme.of(context).textTheme.headline2,
-      //   ),
-      //   centerTitle: true,
-      // ),
       body: ListView(
         padding: EdgeInsets.all(30),
         children: [],
@@ -66,7 +50,7 @@ class _ListPageState extends State<ListPage>
           child: TabBar(
             controller: _tabController,
             isScrollable: true,
-            labelColor: Color(0xFF624D9E),
+            labelColor: Constants.kPrimaryColor,
             unselectedLabelColor: Color(0xFFCDCDCD),
             labelStyle: Theme.of(context).textTheme.headline2,
             indicatorSize: TabBarIndicatorSize.label,

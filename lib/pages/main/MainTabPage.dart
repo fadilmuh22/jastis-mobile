@@ -182,7 +182,7 @@ class _MainTabPageState extends State<MainTabPage> {
                       child: Text(
                         'Join',
                         style: Theme.of(context).textTheme.caption.copyWith(
-                              color: Color(0xFF624D9E),
+                              color: Constants.kPrimaryColor,
                               fontSize: 12,
                             ),
                       ),
@@ -328,7 +328,7 @@ class _MainTabPageState extends State<MainTabPage> {
                           vertical: 7,
                           horizontal: 39,
                         ),
-                        primary: Color(0xFF624D9E),
+                        primary: Constants.kPrimaryColor,
                       ),
                     ),
                   ],

@@ -1,13 +1,15 @@
 part of 'controllers.dart';
 
 class AuthController extends GetxController {
+  final store = GetStorage();
   static AuthController to = Get.find();
+  GoogleSignIn _googleSignIn = GoogleSignIn();
+
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   var user = UserModel().obs;
-
   var valMsg = ''.obs;
 
   @override
@@ -21,6 +23,7 @@ class AuthController extends GetxController {
     nameController?.dispose();
     emailController?.dispose();
     passwordController?.dispose();
+
     super.onClose();
   }
 
@@ -28,8 +31,7 @@ class AuthController extends GetxController {
   Future<ResponseModel<UserModel>> login(BuildContext context) async {
     ResponseModel<UserModel> response;
 
-    valMsg.value = '';
-    showLoadingIndicator(context);
+    OverlayScreen().show(context);
     try {
       response = await ApiJastis.login({
         'email': emailController.text.trim(),
@@ -39,16 +41,16 @@ class AuthController extends GetxController {
         emailController.clear();
         passwordController.clear();
 
-        user.update((val) {
-          val = response.data;
-        });
+        await store.write('token', response.token);
+        await store.write('user', jsonEncode(response.data));
+
+        user.value = response.data;
+
+        clearFieldController();
       } else {
         valMsg.value = response.message;
       }
-      hideLoadingIndicator();
-      return response;
     } catch (error) {
-      hideLoadingIndicator();
       Get.snackbar(
         'Error',
         'Error on signin',
@@ -57,78 +59,110 @@ class AuthController extends GetxController {
       );
     }
 
+    OverlayScreen().pop();
+
     return response;
   }
 
-  // User registration using email and password
-  registerWithEmailAndPassword(BuildContext context) async {
-    showLoadingIndicator(context);
+  Future<ResponseModel<UserModel>> register(BuildContext context) async {
+    ResponseModel<UserModel> response;
+
+    OverlayScreen().show(context);
     try {
-      // await _auth
-      //     .createUserWithEmailAndPassword(
-      //         email: emailController.text, password: passwordController.text)
-      //     .then((result) async {
-      //   print('uID: ' + result.user.uid);
-      //   print('email: ' + result.user.email);
-      //   UserModel _newUser = UserModel(
-      //       uid: result.user.uid,
-      //       email: result.user.email,
-      //       name: nameController.text,
-      //       photoUrl: gravatarUrl);
-      //   //create the user in firestore
-      //   _createUserFirestore(_newUser, result.user);
-      //   emailController.clear();
-      //   passwordController.clear();
-      //   hideLoadingIndicator();
-      // });
+      response = await ApiJastis.register({
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'password': passwordController.text.trim(),
+      });
+      if (response.success) {
+        await store.write('token', response.token);
+        await store.write('user', jsonEncode(response.data));
+
+        user.value = response.data;
+
+        clearFieldController();
+      } else {
+        valMsg.value = response.message;
+      }
     } catch (error) {
-      hideLoadingIndicator();
       Get.snackbar(
         'Error',
-        'Error on register',
+        'Error on signin',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 10),
+        duration: Duration(seconds: 7),
       );
     }
+
+    OverlayScreen().pop();
+
+    return response;
   }
 
-  //handles updating the user when updating profile
-  Future<void> updateUser(BuildContext context, UserModel user, String oldEmail,
-      String password) async {
+  Future<ResponseModel> logout(BuildContext context) async {
+    ResponseModel response;
+    clearFieldController();
+    OverlayScreen().show(context);
     try {
-      showLoadingIndicator(context);
-      // await _auth
-      //     .signInWithEmailAndPassword(email: oldEmail, password: password)
-      //     .then((_firebaseUser) {
-      //   _firebaseUser.user
-      //       .updateEmail(user.email)
-      //       .then((value) => _updateUserFirestore(user, _firebaseUser.user));
-      // });
-      hideLoadingIndicator();
-      Get.snackbar(
-        'Success',
-        'Error on update user',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 5),
-      );
-    } on PlatformException catch (error) {
-      //List<String> errors = error.toString().split(',');
-      // print("Error: " + errors[1]);
-      hideLoadingIndicator();
+      String token = await store.read('token');
+      response = await ApiJastis.logout(token);
+
+      if (response.success) {
+        await store.remove('token');
+        await store.remove('user');
+      } else {
+        valMsg.value = response.message;
+      }
+    } catch (error) {
       Get.snackbar(
         'Error',
-        'Error on update user',
+        'Error on logout',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 10),
+        duration: Duration(seconds: 7),
       );
     }
+
+    OverlayScreen().pop();
+
+    return response;
+  }
+
+  Future<ResponseModel<UserModel>> googleLogin(BuildContext context) async {
+    ResponseModel<UserModel> response;
+
+    OverlayScreen().show(context);
+    try {
+      final result = await _googleSignIn.signIn();
+      final ggAuth = await result.authentication;
+      response = await ApiJastis.googleLogin(ggAuth.accessToken);
+      if (response.success) {
+        await store.write('token', response.token);
+        await store.write('user', jsonEncode(response.data));
+
+        user.value = response.data;
+
+        clearFieldController();
+      } else {
+        valMsg.value = response.message;
+      }
+    } catch (error) {
+      Get.snackbar(
+        'Error',
+        'Error on signin',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 7),
+      );
+    }
+    OverlayScreen().pop();
+
+    return response;
   }
 
   // Sign out
-  Future<void> signOut() {
+  void clearFieldController() {
     nameController.clear();
     emailController.clear();
     passwordController.clear();
-    // return _auth.signOut();
+
+    valMsg.value = '';
   }
 }

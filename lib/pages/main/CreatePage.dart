@@ -1,4 +1,4 @@
-part of 'pages.dart';
+part of '../pages.dart';
 
 class CreatePage extends StatefulWidget {
   @override
@@ -74,7 +74,7 @@ class _CreatePageState extends State<CreatePage>
           child: TabBar(
             controller: _tabController,
             isScrollable: true,
-            labelColor: Color(0xFF624D9E),
+            labelColor: Constants.kPrimaryColor,
             unselectedLabelColor: Color(0xFFCDCDCD),
             labelStyle: Theme.of(context).textTheme.headline2,
             indicatorSize: TabBarIndicatorSize.label,
@@ -185,7 +185,7 @@ class _CreatePageState extends State<CreatePage>
               onPressed: () {},
               child: Text('Create'),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF624D9E),
+                primary: Constants.kPrimaryColor,
               ),
             ),
           ],
@@ -282,7 +282,7 @@ class _CreatePageState extends State<CreatePage>
               onPressed: () {},
               child: Text('Create'),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF624D9E),
+                primary: Constants.kPrimaryColor,
               ),
             ),
           ],
@@ -379,7 +379,7 @@ class _CreatePageState extends State<CreatePage>
               onPressed: () {},
               child: Text('Create'),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF624D9E),
+                primary: Constants.kPrimaryColor,
               ),
             ),
           ],

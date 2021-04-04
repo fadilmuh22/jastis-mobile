@@ -1,4 +1,4 @@
-part of 'pages.dart';
+part of '../pages.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -29,8 +29,8 @@ class _SplashPageState extends State<SplashPage> {
           MaterialPageRoute(builder: (BuildContext context) => IntroPage()));
     } else {
       var userString = await store.read('user');
-      if (json != null) {
-        UserModel user = UserModel.fromJson(json.decode(userString));
+      if (userString != null) {
+        UserModel user = UserModel.fromJson(jsonDecode(userString));
         _auth.user.value = user;
         ApiJastis.setAuthToken(await store.read('token'));
 
@@ -71,7 +71,7 @@ class _SplashPageState extends State<SplashPage> {
                         child: Text(
                           'Permudah proses belajar kapan saja, dimana saja.',
                           style: TextStyle(
-                            color: Color(0xFF624D9E).withOpacity(.55),
+                            color: Constants.kPrimaryColor.withOpacity(.55),
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),

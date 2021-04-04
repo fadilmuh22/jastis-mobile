@@ -1,4 +1,4 @@
-part of 'pages.dart';
+part of '../pages.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -13,9 +13,6 @@ class _LoginPageState extends State<LoginPage> {
   Future _login(context) async {
     ResponseModel<UserModel> response = await _auth.login(context);
     if (response.success) {
-      store.write('user', json.encode(response.data));
-      store.write('token', response.token);
-
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainTabPage()));
     }
@@ -94,17 +91,26 @@ class _LoginPageState extends State<LoginPage> {
                           .caption
                           .copyWith(fontSize: 12),
                     ),
-                    SizedBox(height: 8),
-                    Obx(() {
-                      return Text(
-                        '${_auth.valMsg.value}',
-                        style: Theme.of(context).textTheme.caption.copyWith(
-                              color: Colors.red,
-                              fontSize: 12,
-                            ),
-                      );
-                    }),
-                    SizedBox(height: 8),
+                    _auth.valMsg.value.isNotEmpty
+                        ? Column(
+                            children: [
+                              SizedBox(height: 8),
+                              Obx(() {
+                                return Text(
+                                  '${_auth.valMsg.value}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .caption
+                                      .copyWith(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                );
+                              }),
+                            ],
+                          )
+                        : Container(),
+                    SizedBox(height: 7),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -113,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             'Forgot your password?',
                             style: TextStyle(
-                              color: Color(0xFF624D9E),
+                              color: Constants.kPrimaryColor,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -132,6 +138,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(height: Constants.kDefaultPadding),
           ElevatedButton(
             onPressed: () {
+              FocusScope.of(context).requestFocus(FocusNode());
               _login(context);
             },
             child: Text(
@@ -144,7 +151,32 @@ class _LoginPageState extends State<LoginPage> {
             style: ElevatedButton.styleFrom(
               padding:
                   EdgeInsets.symmetric(vertical: Constants.kDefaultPadding),
-              primary: Color(0xFF624D9E),
+              primary: Constants.kPrimaryColor,
+            ),
+          ),
+          SizedBox(height: Constants.kDefaultPadding + 5),
+          ElevatedButton(
+            onPressed: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+              _auth.clearFieldController();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RegisterPage(),
+                ),
+              );
+            },
+            child: Text(
+              'Register',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              padding:
+                  EdgeInsets.symmetric(vertical: Constants.kDefaultPadding),
+              primary: Constants.kAccentColor,
             ),
           ),
           SizedBox(height: 31),
