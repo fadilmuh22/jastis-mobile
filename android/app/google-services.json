@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "732211674068",
+    "project_id": "jastis-smkn4",
+    "storage_bucket": "jastis-smkn4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732211674068:android:5e1022d391d730a774b441",
+        "android_client_info": {
+          "package_name": "com.jastis.jastis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732211674068-lu4mmpqlaa6mpr0csvc75e6naspsh7dn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jastis.jastis",
+            "certificate_hash": "f56f2d0dd1c138c20c16935a85563fe62a07edc0"
+          }
+        },
+        {
+          "client_id": "732211674068-t15ls94hvdshe4e38dmn36blit0ppmqf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4n4gYjzTfxRBQcIFhRunN6s2JJonU5-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732211674068-t15ls94hvdshe4e38dmn36blit0ppmqf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,8 +10,20 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final AuthController _auth = AuthController.to;
 
+  bool _passwordVisible = false;
+
   Future _login(context) async {
-    ResponseModel<UserModel> response = await _auth.login(context);
+    if (_formKey.currentState.validate()) {
+      ResponseModel<UserModel> response = await _auth.login(context);
+      if (response.success) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MainTabPage()));
+      }
+    }
+  }
+
+  Future _googleLogin(context) async {
+    ResponseModel<UserModel> response = await _auth.googleLogin(context);
     if (response.success) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainTabPage()));
@@ -60,6 +72,11 @@ class _LoginPageState extends State<LoginPage> {
                         filled: true,
                         fillColor: Color(0xFFE5E5E5),
                       ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Email can\'t be empty';
+                        }
+                      },
                       style: Theme.of(context)
                           .textTheme
                           .caption
@@ -85,31 +102,50 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         filled: true,
                         fillColor: Color(0xFFE5E5E5),
+                        suffixIcon: IconButton(
+                          icon: _passwordVisible
+                              ? Icon(Icons.visibility)
+                              : Icon(Icons.visibility_off),
+                          iconSize: 24,
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        ),
                       ),
+                      obscureText: !_passwordVisible,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Password can\'t be empty';
+                        }
+                      },
                       style: Theme.of(context)
                           .textTheme
                           .caption
                           .copyWith(fontSize: 12),
                     ),
-                    _auth.valMsg.value.isNotEmpty
-                        ? Column(
-                            children: [
-                              SizedBox(height: 8),
-                              Obx(() {
-                                return Text(
-                                  '${_auth.valMsg.value}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .caption
-                                      .copyWith(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                      ),
-                                );
-                              }),
-                            ],
-                          )
-                        : Container(),
+                    Obx(() {
+                      return _auth.valMsg.value.isNotEmpty
+                          ? Column(
+                              children: [
+                                SizedBox(height: 8),
+                                Obx(() {
+                                  return Text(
+                                    '${_auth.valMsg.value}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption
+                                        .copyWith(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                  );
+                                }),
+                              ],
+                            )
+                          : Container();
+                    }),
                     SizedBox(height: 7),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -199,8 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 20,
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => MainTabPage()));
+                  _googleLogin(context);
                 },
               ),
             ],

@@ -1,28 +1,24 @@
 part of 'data.dart';
 
-class ApiJastis {
-  static Dio dio = Dio(BaseOptions(
-    baseUrl: 'https://jastid.herokuapp.com/api',
-    connectTimeout: Duration(minutes: 1).inMilliseconds,
-    receiveTimeout: Duration(minutes: 1).inMilliseconds,
-  ));
-
+class AuthApi {
   static Future<ResponseModel<UserModel>> login(Map loginInfo) async {
     ResponseModel<UserModel> response;
     try {
-      var result = await dio.post('/login', data: {
+      var result = await JastisApi.dio.post('/login', data: {
         'email': loginInfo['email'],
         'password': loginInfo['password'],
       });
       response = ResponseModel.fromJson(result.data);
       if (response.success) {
-        response.data = UserModel.fromJson(result.data['user']);
-        ApiJastis.setAuthToken(response.token);
+        response.data = UserModel.fromJson(result.data['data']);
+        JastisApi.setAuthToken(response.token);
       }
     } on DioError catch (e) {
       if (e.response.statusCode == 401) {
         response = ResponseModel<UserModel>.fromJson(e.response.data);
       }
+    } catch (e) {
+      rethrow;
     }
     return response;
   }
@@ -30,7 +26,7 @@ class ApiJastis {
   static Future<ResponseModel<UserModel>> register(Map loginInfo) async {
     ResponseModel<UserModel> response;
     try {
-      var result = await dio.post('/register', data: {
+      var result = await JastisApi.dio.post('/register', data: {
         'name': loginInfo['name'],
         'email': loginInfo['email'],
         'password': loginInfo['password'],
@@ -38,12 +34,31 @@ class ApiJastis {
       response = ResponseModel.fromJson(result.data);
       if (response.success) {
         response.data = UserModel.fromJson(result.data['user']);
-        ApiJastis.setAuthToken(response.token);
+        JastisApi.setAuthToken(response.token);
       }
     } on DioError catch (e) {
       if (e.response.statusCode == 401) {
         response = ResponseModel<UserModel>.fromJson(e.response.data);
       }
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
+  static Future<ResponseModel> logout() async {
+    ResponseModel<UserModel> response;
+    try {
+      var result = await JastisApi.dio.post('/logout', data: {
+        'token': JastisApi.token,
+      });
+      response = ResponseModel.fromJson(result.data);
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        response = ResponseModel.fromJson(e.response.data);
+      }
+    } catch (e) {
+      rethrow;
     }
     return response;
   }
@@ -51,30 +66,33 @@ class ApiJastis {
   static Future<ResponseModel> googleLogin(String token) async {
     ResponseModel<UserModel> response;
     try {
-      var result = await dio.post('/google', data: {
+      var result = await JastisApi.dio.post('/google', data: {
         'token': token,
       });
       response = ResponseModel.fromJson(result.data);
     } on DioError catch (e) {
-      response = ResponseModel.fromJson(e.response.data);
+      if (e.response.statusCode == 401) {
+        response = ResponseModel<UserModel>.fromJson(e.response.data);
+      }
+    } catch (e) {
+      rethrow;
     }
     return response;
   }
 
-  static Future<ResponseModel> logout(String token) async {
+  static Future<ResponseModel<UserModel>> userInfo(String userId) async {
     ResponseModel<UserModel> response;
     try {
-      var result = await dio.post('/logout', data: {
-        'token': token,
-      });
+      var result = await JastisApi.dio.get('/user/$userId');
       response = ResponseModel.fromJson(result.data);
+      response.data = UserModel.fromJson(result.data['data']);
     } on DioError catch (e) {
-      response = ResponseModel.fromJson(e.response.data);
+      if (e.response.statusCode == 401) {
+        response = ResponseModel<UserModel>.fromJson(e.response.data);
+      }
+    } catch (e) {
+      rethrow;
     }
     return response;
-  }
-
-  static setAuthToken(String token) {
-    dio.options.headers["Authorization"] = "Bearer $token";
   }
 }

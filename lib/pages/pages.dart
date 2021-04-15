@@ -23,5 +23,5 @@ part './main/HomePage.dart';
 part './main/ListPage.dart';
 
 part 'main/CreatePage.dart';
-part 'main/TaskDetailPage.dart';
+part 'main/ClassDetailPage.dart';
 part 'main/NotificationsPage.dart';

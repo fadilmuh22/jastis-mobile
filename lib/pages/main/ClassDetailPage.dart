@@ -1,11 +1,11 @@
 part of '../pages.dart';
 
-class TaskDetailPage extends StatefulWidget {
+class ClassDetailPage extends StatefulWidget {
   @override
-  _TaskDetailPageState createState() => _TaskDetailPageState();
+  _ClassDetailPageState createState() => _ClassDetailPageState();
 }
 
-class _TaskDetailPageState extends State<TaskDetailPage> {
+class _ClassDetailPageState extends State<ClassDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -5,8 +5,9 @@ class UserModel {
     this.id,
     this.name,
     this.email,
-    this.updatedAt,
+    this.emailVerifiedAt,
     this.createdAt,
+    this.updatedAt,
     this.userKelas,
     this.kelas,
   });
@@ -14,28 +15,48 @@ class UserModel {
   String id;
   String name;
   String email;
-  DateTime updatedAt;
+  DateTime emailVerifiedAt;
   DateTime createdAt;
-  List<dynamic> userKelas;
-  List<dynamic> kelas;
+  DateTime updatedAt;
+  List<KelasModel> userKelas;
+  List<KelasModel> kelas;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["_id"],
-        name: json["name"],
-        email: json["email"],
-        updatedAt: DateTime.parse(json["updated_at"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        // userKelas: List<dynamic>.from(json["user_kelas"].map((x) => x)),
-        // kelas: List<dynamic>.from(json["kelas"].map((x) => x)),
-      );
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json["_id"],
+      name: json["name"],
+      email: json["email"],
+      emailVerifiedAt: json["email_verified_at"] == null
+          ? null
+          : DateTime.parse(json["email_verified_at"]),
+      createdAt: DateTime.parse(json["created_at"]),
+      updatedAt: DateTime.parse(json["updated_at"]),
+      userKelas: json["user_kelas"] == null
+          ? null
+          : List<KelasModel>.from(
+              json["user_kelas"].map((x) => KelasModel.fromJson(x))),
+      kelas: json["kelas"] == null
+          ? null
+          : List<KelasModel>.from(
+              json["kelas"].map((x) => KelasModel.fromJson(x))),
+    );
+  }
 
-  Map<String, dynamic> toJson() => {
-        "_id": id,
-        "name": name,
-        "email": email,
-        "updated_at": updatedAt.toIso8601String(),
-        "created_at": createdAt.toIso8601String(),
-        // "user_kelas": List<dynamic>.from(userKelas.map((x) => x)),
-        // "kelas": List<dynamic>.from(kelas.map((x) => x)),
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": id,
+      "name": name,
+      "email": email,
+      "email_verified_at":
+          emailVerifiedAt == null ? null : emailVerifiedAt.toIso8601String(),
+      "created_at": createdAt.toIso8601String(),
+      "updated_at": updatedAt.toIso8601String(),
+      "user_kelas": userKelas == null
+          ? null
+          : List<dynamic>.from(userKelas.map((x) => x.toJson())),
+      "kelas": kelas == null
+          ? null
+          : List<dynamic>.from(kelas.map((x) => x.toJson())),
+    };
+  }
 }

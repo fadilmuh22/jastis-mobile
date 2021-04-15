@@ -32,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
       if (userString != null) {
         UserModel user = UserModel.fromJson(jsonDecode(userString));
         _auth.user.value = user;
-        ApiJastis.setAuthToken(await store.read('token'));
+        JastisApi.setAuthToken(await store.read('token'));
 
         Navigator.pushReplacement(
             context,

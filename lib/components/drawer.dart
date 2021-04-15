@@ -1,12 +1,31 @@
 part of 'components.dart';
 
+ListTile listTileKelas(BuildContext context, KelasModel kelas) {
+  return ListTile(
+    dense: true,
+    contentPadding: EdgeInsets.symmetric(horizontal: 6),
+    leading: CircleAvatar(),
+    title: Text(
+      '${kelas.name}',
+      style: Theme.of(context).textTheme.caption.copyWith(fontSize: 11),
+    ),
+    subtitle: Text(
+      '${kelas.createdAt}',
+      style: Theme.of(context).textTheme.subtitle2,
+    ),
+    onTap: () {},
+  );
+}
+
 class CustomDrawer extends StatefulWidget {
   CustomDrawer({
     Key key,
     @required this.context,
+    @required this.moreClassOnTap,
   }) : super(key: key);
 
   final BuildContext context;
+  final Function moreClassOnTap;
 
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
@@ -74,7 +93,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               padding: EdgeInsets.only(left: 4),
                               child: Column(
                                 children: [
-                                  _user.kelas == null || _user.kelas.isEmpty
+                                  _user.kelas == null
                                       ? Container(
                                           height: 36,
                                           child: Center(
@@ -86,12 +105,35 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                             ),
                                           ),
                                         )
-                                      : ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: _user.kelas.length,
-                                          itemBuilder: (context, index) {
-                                            return _listTileKelas(context);
-                                          },
+                                      : Column(
+                                          children: [
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: 3,
+                                              itemBuilder: (context, index) {
+                                                return listTileKelas(
+                                                    context, _user.kelas[0]);
+                                              },
+                                            ),
+                                            if (_user.kelas.length > 3)
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  this.widget.moreClassOnTap();
+                                                },
+                                                child: Text(
+                                                  'More',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .caption
+                                                      .copyWith(
+                                                        color: Constants
+                                                            .kPrimaryColor,
+                                                        fontSize: 12,
+                                                      ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                 ],
                               ),
@@ -146,23 +188,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
         ),
       ),
-    );
-  }
-
-  ListTile _listTileKelas(BuildContext context) {
-    return ListTile(
-      dense: true,
-      contentPadding: EdgeInsets.symmetric(horizontal: 6),
-      leading: CircleAvatar(),
-      title: Text(
-        'Basis Data',
-        style: Theme.of(context).textTheme.caption.copyWith(fontSize: 11),
-      ),
-      subtitle: Text(
-        'Today',
-        style: Theme.of(context).textTheme.subtitle2,
-      ),
-      onTap: () {},
     );
   }
 }

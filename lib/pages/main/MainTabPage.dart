@@ -8,30 +8,17 @@ class MainTabPage extends StatefulWidget {
 class _MainTabPageState extends State<MainTabPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  int _selectedIndex = 0;
-  Widget _widgetOptions() {
-    switch (_selectedIndex) {
-      case 0:
-        return HomePage();
-      case 1:
-        return ListPage();
-    }
-    return Container();
-  }
+  final ScreenController _scrc = ScreenController.to;
 
-  void _onItemTapped(context, int index) {
-    if (index == 2) {
-      showBottomSheet(
-        context: context,
-        builder: (context) => Container(
-          color: Colors.grey[900],
-          height: 250,
-        ),
-      );
-      return;
-    }
-    setState(() {
-      _selectedIndex = index;
+  Widget _widgetOptions(BuildContext context) {
+    return Obx(() {
+      switch (_scrc.tabIndex.value) {
+        case 0:
+          return HomePage();
+        case 1:
+          return ListPage();
+      }
+      return Container();
     });
   }
 
@@ -52,8 +39,8 @@ class _MainTabPageState extends State<MainTabPage> {
         foregroundColor: Color(0xFF5E5454),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.person),
-          onPressed: () {},
+          icon: Icon(Icons.menu),
+          onPressed: openDrawer,
           color: Colors.blue,
         ),
         title: Text(
@@ -65,7 +52,7 @@ class _MainTabPageState extends State<MainTabPage> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              _joinMBS();
+              _joinMBS(context);
             },
             color: Color(0xFF5E5454),
           ),
@@ -73,8 +60,11 @@ class _MainTabPageState extends State<MainTabPage> {
       ),
       drawer: CustomDrawer(
         context: context,
+        moreClassOnTap: () {
+          _scrc.onTabTapped(1);
+        },
       ),
-      body: _widgetOptions(),
+      body: _widgetOptions(context),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -87,27 +77,29 @@ class _MainTabPageState extends State<MainTabPage> {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 0,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
-            label: 'Task',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Constants.kPrimaryColor,
-        unselectedItemColor: Colors.black,
-        onTap: (index) => _onItemTapped(context, index),
-      ),
+      bottomNavigationBar: Obx(() {
+        return BottomNavigationBar(
+          elevation: 0,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt),
+              label: 'Task',
+            ),
+          ],
+          currentIndex: _scrc.tabIndex.value,
+          selectedItemColor: Constants.kPrimaryColor,
+          unselectedItemColor: Colors.black,
+          onTap: (index) => _scrc.onTabTapped(index),
+        );
+      }),
     );
   }
 
-  void _joinMBS() {
+  void _joinMBS(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -197,7 +189,7 @@ class _MainTabPageState extends State<MainTabPage> {
     );
   }
 
-  void _eventDetailMBS() {
+  void _eventDetailMBS(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

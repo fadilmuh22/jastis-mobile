@@ -10,6 +10,7 @@ class AuthController extends GetxController {
   TextEditingController passwordController = TextEditingController();
 
   var user = UserModel().obs;
+  bool googleUser = false;
   var valMsg = ''.obs;
 
   @override
@@ -29,11 +30,11 @@ class AuthController extends GetxController {
 
   //Method to handle user sign in using email and password
   Future<ResponseModel<UserModel>> login(BuildContext context) async {
-    ResponseModel<UserModel> response;
+    ResponseModel<UserModel> response = ResponseModel<UserModel>();
 
     OverlayScreen().show(context);
     try {
-      response = await ApiJastis.login({
+      response = await AuthApi.login({
         'email': emailController.text.trim(),
         'password': passwordController.text.trim(),
       });
@@ -51,25 +52,26 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
+      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on signin',
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 7),
       );
+    } finally {
+      OverlayScreen().pop();
     }
-
-    OverlayScreen().pop();
 
     return response;
   }
 
   Future<ResponseModel<UserModel>> register(BuildContext context) async {
-    ResponseModel<UserModel> response;
+    ResponseModel<UserModel> response = ResponseModel<UserModel>();
 
     OverlayScreen().show(context);
     try {
-      response = await ApiJastis.register({
+      response = await AuthApi.register({
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
         'password': passwordController.text.trim(),
@@ -85,26 +87,30 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
+      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on signin',
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 7),
       );
+    } finally {
+      OverlayScreen().pop();
     }
-
-    OverlayScreen().pop();
 
     return response;
   }
 
   Future<ResponseModel> logout(BuildContext context) async {
-    ResponseModel response;
+    ResponseModel response = ResponseModel();
     clearFieldController();
     OverlayScreen().show(context);
     try {
-      String token = await store.read('token');
-      response = await ApiJastis.logout(token);
+      response = await AuthApi.logout();
+
+      if (googleUser) {
+        await _googleSignIn.signOut();
+      }
 
       if (response.success) {
         await store.remove('token');
@@ -113,27 +119,30 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
+      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on logout',
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 7),
       );
+    } finally {
+      OverlayScreen().pop();
     }
-
-    OverlayScreen().pop();
 
     return response;
   }
 
   Future<ResponseModel<UserModel>> googleLogin(BuildContext context) async {
-    ResponseModel<UserModel> response;
+    ResponseModel<UserModel> response = ResponseModel<UserModel>();
+
+    googleUser = true;
 
     OverlayScreen().show(context);
     try {
       final result = await _googleSignIn.signIn();
       final ggAuth = await result.authentication;
-      response = await ApiJastis.googleLogin(ggAuth.accessToken);
+      // response = await AuthApi.googleLogin(ggAuth.accessToken);
       if (response.success) {
         await store.write('token', response.token);
         await store.write('user', jsonEncode(response.data));
@@ -145,14 +154,16 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
+      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on signin',
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 7),
       );
+    } finally {
+      OverlayScreen().pop();
     }
-    OverlayScreen().pop();
 
     return response;
   }

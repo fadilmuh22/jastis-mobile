@@ -10,8 +10,20 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final AuthController _auth = AuthController.to;
 
+  bool _passwordVisible = false;
+
   Future _register(context) async {
-    ResponseModel<UserModel> response = await _auth.register(context);
+    if (_formKey.currentState.validate()) {
+      ResponseModel<UserModel> response = await _auth.register(context);
+      if (response.success) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MainTabPage()));
+      }
+    }
+  }
+
+  Future _googleLogin(context) async {
+    ResponseModel<UserModel> response = await _auth.googleLogin(context);
     if (response.success) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainTabPage()));
@@ -22,6 +34,13 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+      ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 38),
         children: [
@@ -60,6 +79,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         filled: true,
                         fillColor: Color(0xFFE5E5E5),
                       ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Username can\'t be empty';
+                        }
+                      },
                       style: Theme.of(context)
                           .textTheme
                           .caption
@@ -87,6 +111,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         filled: true,
                         fillColor: Color(0xFFE5E5E5),
                       ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Email can\'t be empty';
+                        }
+                      },
                       style: Theme.of(context)
                           .textTheme
                           .caption
@@ -112,37 +141,56 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         filled: true,
                         fillColor: Color(0xFFE5E5E5),
+                        suffixIcon: IconButton(
+                          icon: _passwordVisible
+                              ? Icon(Icons.visibility)
+                              : Icon(Icons.visibility_off),
+                          iconSize: 24,
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        ),
                       ),
+                      obscureText: !_passwordVisible,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Password can\'t be empty';
+                        }
+                      },
                       style: Theme.of(context)
                           .textTheme
                           .caption
                           .copyWith(fontSize: 12),
                     ),
-                    _auth.valMsg.value.isNotEmpty
-                        ? Column(
-                            children: [
-                              SizedBox(height: 8),
-                              Obx(() {
-                                return Text(
-                                  '${_auth.valMsg.value}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .caption
-                                      .copyWith(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                      ),
-                                );
-                              }),
-                            ],
-                          )
-                        : Container(),
+                    Obx(() {
+                      return _auth.valMsg.value.isNotEmpty
+                          ? Column(
+                              children: [
+                                SizedBox(height: 8),
+                                Obx(() {
+                                  return Text(
+                                    '${_auth.valMsg.value}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption
+                                        .copyWith(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                  );
+                                }),
+                              ],
+                            )
+                          : Container();
+                    }),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height: Constants.kDefaultPadding),
+          SizedBox(height: 57),
           ElevatedButton(
             onPressed: () {
               FocusScope.of(context).requestFocus(FocusNode());
@@ -181,8 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 20,
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => MainTabPage()));
+                  _googleLogin(context);
                 },
               ),
             ],

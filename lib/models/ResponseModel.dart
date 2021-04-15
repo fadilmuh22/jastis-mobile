@@ -2,8 +2,8 @@ part of 'models.dart';
 
 class ResponseModel<T> {
   ResponseModel({
-    this.success,
-    this.message,
+    this.success = false,
+    this.message = 'Error on sending request',
     this.token,
   });
 

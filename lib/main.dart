@@ -11,6 +11,9 @@ void main() async {
 
   await GetStorage.init();
   Get.put<AuthController>(AuthController());
+  Get.put<ScreenController>(ScreenController());
+  Get.put<KelasController>(KelasController());
+  Get.put<CreateController>(CreateController());
   runApp(MyApp());
 }
 
