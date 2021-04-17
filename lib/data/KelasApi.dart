@@ -64,6 +64,26 @@ class KelasApi {
     return response;
   }
 
+  static Future<ResponseModel> joinKelas(KelasModel kelas) async {
+    ResponseModel response;
+    try {
+      var result = await JastisApi.dio.post(
+        '/user/${kelas.userId}/kelas',
+        data: {
+          'code': kelas.code,
+        },
+      );
+      response = ResponseModel.fromJson(result.data);
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        response = ResponseModel.fromJson(e.response.data);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
   static Future<ResponseModel> createTask(TaskModel task) async {
     ResponseModel response;
     try {

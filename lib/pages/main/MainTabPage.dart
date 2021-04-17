@@ -14,6 +14,19 @@ class _MainTabPageState extends State<MainTabPage> {
   final ScreenController _screenc = ScreenController.to;
   final KelasController _kelasc = KelasController.to;
 
+  KelasModel kelas;
+
+  final _formKey = GlobalKey<FormState>();
+
+  Future _join(context) async {
+    if (_formKey.currentState.validate()) {
+      ResponseModel response = await _kelasc.joinKelas(context, kelas);
+      if (response.success) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
   Widget _widgetOptions(BuildContext context) {
     return Obx(() {
       switch (_screenc.tabIndex.value) {
@@ -141,69 +154,77 @@ class _MainTabPageState extends State<MainTabPage> {
                 topRight: const Radius.circular(30.0),
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Join Class',
-                  style: Theme.of(context).textTheme.headline1,
-                ),
-                SizedBox(height: 41),
-                Center(
-                  child: Image.asset(
-                    'assets/img/join_img.png',
-                    width: 200,
-                    height: 200,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Join Class',
+                    style: Theme.of(context).textTheme.headline1,
                   ),
-                ),
-                SizedBox(height: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Username',
-                      style: Theme.of(context).textTheme.caption,
+                  SizedBox(height: 41),
+                  Center(
+                    child: Image.asset(
+                      'assets/img/join_img.png',
+                      width: 200,
+                      height: 200,
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10.0),
+                  ),
+                  SizedBox(height: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Class Code',
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                      TextFormField(
+                        controller: _kelasc.codeController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
                           ),
+                          filled: true,
+                          fillColor: Color(0xFFE5E5E5),
                         ),
-                        filled: true,
-                        fillColor: Color(0xFFE5E5E5),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Cancel',
+                          style: Theme.of(context).textTheme.caption.copyWith(
+                                color: Color(0xFF7E7D7D),
+                                fontSize: 12,
+                              ),
+                        ),
                       ),
-                    )
-                  ],
-                ),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Cancel',
-                        style: Theme.of(context).textTheme.caption.copyWith(
-                              color: Color(0xFF7E7D7D),
-                              fontSize: 12,
-                            ),
+                      TextButton(
+                        onPressed: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          _join(context);
+                        },
+                        child: Text(
+                          'Join',
+                          style: Theme.of(context).textTheme.caption.copyWith(
+                                color: Constants.kPrimaryColor,
+                                fontSize: 12,
+                              ),
+                        ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Join',
-                        style: Theme.of(context).textTheme.caption.copyWith(
-                              color: Constants.kPrimaryColor,
-                              fontSize: 12,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

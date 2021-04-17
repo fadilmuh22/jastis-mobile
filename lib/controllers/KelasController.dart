@@ -5,6 +5,8 @@ class KelasController extends GetxController {
   static KelasController to = Get.find();
   final AuthController _auth = AuthController.to;
 
+  TextEditingController codeController = TextEditingController();
+
   RxList<KelasModel> listKelas = <KelasModel>[].obs;
   RxList<KelasModel> teachingKelas = <KelasModel>[].obs;
   RxList<KelasModel> joinedKelas = <KelasModel>[].obs;
@@ -136,6 +138,39 @@ class KelasController extends GetxController {
       } finally {
         OverlayScreen().pop();
       }
+    }
+
+    return response;
+  }
+
+  Future<ResponseModel> joinKelas(
+      BuildContext context, KelasModel kelas) async {
+    ResponseModel response = ResponseModel();
+    OverlayScreen().show(context);
+    try {
+      response = await KelasApi.joinKelas(kelas);
+
+      if (response.success) {
+        Get.snackbar(
+          'Success',
+          'Success on joinKelas',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 7),
+        );
+      } else {}
+    } catch (error) {
+      // OverlayScreen().pop();
+      Get.snackbar(
+        'Error',
+        'Error on joinKelas',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 7),
+        backgroundColor: Colors.red.withOpacity(.6),
+        colorText: Colors.white,
+      );
+    } finally {
+      Get.back();
+      Get.back();
     }
 
     return response;
