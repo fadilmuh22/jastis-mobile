@@ -90,7 +90,7 @@ class AuthController extends GetxController {
       OverlayScreen().pop();
       Get.snackbar(
         'Error',
-        'Error on signin',
+        'Error on register',
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 7),
       );
@@ -157,7 +157,7 @@ class AuthController extends GetxController {
       OverlayScreen().pop();
       Get.snackbar(
         'Error',
-        'Error on signin',
+        'Error on googleLogin',
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 7),
       );

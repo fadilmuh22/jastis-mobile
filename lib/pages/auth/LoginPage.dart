@@ -8,6 +8,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final store = GetStorage();
   final _formKey = GlobalKey<FormState>();
+
+  final _formKeys = GlobalKey<FormState>();
   final AuthController _auth = AuthController.to;
 
   bool _passwordVisible = false;
@@ -77,10 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                           return 'Email can\'t be empty';
                         }
                       },
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          .copyWith(fontSize: 12),
+                      style: Theme.of(context).textTheme.caption,
                     )
                   ],
                 ),
@@ -120,10 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                           return 'Password can\'t be empty';
                         }
                       },
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          .copyWith(fontSize: 12),
+                      style: Theme.of(context).textTheme.caption,
                     ),
                     Obx(() {
                       return _auth.valMsg.value.isNotEmpty

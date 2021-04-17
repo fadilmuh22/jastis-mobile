@@ -4,16 +4,20 @@ ListTile listTileKelas(BuildContext context, KelasModel kelas) {
   return ListTile(
     dense: true,
     contentPadding: EdgeInsets.symmetric(horizontal: 6),
-    leading: CircleAvatar(),
+    leading: CircleAvatar(
+      backgroundColor: Color(int.parse('0xFF${kelas.color}')),
+    ),
     title: Text(
       '${kelas.name}',
       style: Theme.of(context).textTheme.caption.copyWith(fontSize: 11),
     ),
     subtitle: Text(
-      '${kelas.createdAt}',
+      '${kelas.users.name}',
       style: Theme.of(context).textTheme.subtitle2,
     ),
-    onTap: () {},
+    onTap: () {
+      Get.to(() => ClassDetailPage(kelas: kelas));
+    },
   );
 }
 
@@ -33,7 +37,10 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   final AuthController _auth = AuthController.to;
+  final KelasController _kelasc = KelasController.to;
   UserModel _user;
+
+  List<KelasModel> _teaching;
 
   @override
   void initState() {
@@ -86,58 +93,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           shrinkWrap: true,
                           padding: EdgeInsets.all(20),
                           children: [
-                            Text(
-                              'Your Classes',
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 4),
-                              child: Column(
-                                children: [
-                                  _user.kelas == null
-                                      ? Container(
-                                          height: 36,
-                                          child: Center(
-                                            child: Text(
-                                              'You haven\'t join any class yet',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .subtitle1,
-                                            ),
-                                          ),
-                                        )
-                                      : Column(
-                                          children: [
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: 3,
-                                              itemBuilder: (context, index) {
-                                                return listTileKelas(
-                                                    context, _user.kelas[0]);
-                                              },
-                                            ),
-                                            if (_user.kelas.length > 3)
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  this.widget.moreClassOnTap();
-                                                },
-                                                child: Text(
-                                                  'More',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .caption
-                                                      .copyWith(
-                                                        color: Constants
-                                                            .kPrimaryColor,
-                                                        fontSize: 12,
-                                                      ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                ],
-                              ),
-                            ),
+                            _teachingClasses(context),
+                            SizedBox(height: 30),
+                            _joinedClasses(context),
                             SizedBox(height: 30),
                             ListTile(
                               dense: true,
@@ -188,6 +146,138 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _teachingClasses(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Teaching',
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 4),
+          child: Column(
+            children: [
+              Obx(() {
+                if (_kelasc.isLoadingKelas.value) {
+                  return CircularProgressIndicator();
+                }
+                return _kelasc.teachingKelas.value == null ||
+                        _kelasc.teachingKelas.value.isEmpty
+                    ? Container(
+                        height: 36,
+                        child: Center(
+                          child: Text(
+                            'You haven\'t teach any class yet',
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: [
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _kelasc.teachingKelas.value.length > 3
+                                ? 3
+                                : _kelasc.teachingKelas.value.length,
+                            itemBuilder: (context, index) {
+                              return listTileKelas(
+                                  context, _kelasc.teachingKelas.value[index]);
+                            },
+                          ),
+                          if (_kelasc.teachingKelas.value.length > 3)
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                this.widget.moreClassOnTap();
+                              },
+                              child: Text(
+                                'More',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .caption
+                                    .copyWith(
+                                      color: Constants.kPrimaryColor,
+                                      fontSize: 12,
+                                    ),
+                              ),
+                            ),
+                        ],
+                      );
+              }),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _joinedClasses(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Joined Classes',
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 4),
+          child: Column(
+            children: [
+              Obx(() {
+                if (_kelasc.isLoadingKelas.value) {
+                  return CircularProgressIndicator();
+                }
+                return _kelasc.joinedKelas.value == null ||
+                        _kelasc.joinedKelas.value.isEmpty
+                    ? Container(
+                        height: 36,
+                        child: Center(
+                          child: Text(
+                            'You haven\'t join any class yet',
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: [
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _kelasc.joinedKelas.value.length > 3
+                                ? 3
+                                : _kelasc.joinedKelas.value.length,
+                            itemBuilder: (context, index) {
+                              return listTileKelas(
+                                  context, _kelasc.joinedKelas.value[index]);
+                            },
+                          ),
+                          if (_kelasc.joinedKelas.value.length > 3)
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                this.widget.moreClassOnTap();
+                              },
+                              child: Text(
+                                'More',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .caption
+                                    .copyWith(
+                                      color: Constants.kPrimaryColor,
+                                      fontSize: 12,
+                                    ),
+                              ),
+                            ),
+                        ],
+                      );
+              }),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

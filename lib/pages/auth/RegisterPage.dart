@@ -84,10 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return 'Username can\'t be empty';
                         }
                       },
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          .copyWith(fontSize: 12),
+                      style: Theme.of(context).textTheme.caption,
                     )
                   ],
                 ),
@@ -116,10 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return 'Email can\'t be empty';
                         }
                       },
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          .copyWith(fontSize: 12),
+                      style: Theme.of(context).textTheme.caption,
                     )
                   ],
                 ),
@@ -159,10 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return 'Password can\'t be empty';
                         }
                       },
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          .copyWith(fontSize: 12),
+                      style: Theme.of(context).textTheme.caption,
                     ),
                     Obx(() {
                       return _auth.valMsg.value.isNotEmpty

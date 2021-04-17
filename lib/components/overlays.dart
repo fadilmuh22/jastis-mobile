@@ -58,7 +58,7 @@ class OverlayScreen {
   }) {
     assert(_instance._customOverLayScreens.isNotEmpty, "overlay screens empty");
     assert(_customOverLayScreens.containsKey(identifier), "widget not found");
-    assert(_instance._state == Screen.none, "already showing screen");
+    // assert(_instance._state == Screen.none, "already showing screen");
     _instance._state = Screen.showing;
     showDialog(
       context: context,
@@ -143,6 +143,71 @@ void initOverlays(BuildContext context) {
                 child: CircularProgressIndicator(),
               ),
             ],
+          ),
+        ),
+      ),
+    ),
+    'modal-create': CustomOverlayScreen(
+      backgroundColor: Constants.kPrimaryColor.withOpacity(.3),
+      content: Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            height: 180.0,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            OverlayScreen().pop();
+                            Get.to(() => CreateTask());
+                          },
+                          child: Text(
+                            'Tugas',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: Constants.kDefaultPadding),
+                            primary: Constants.kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            OverlayScreen().pop();
+                            Get.to(() => CreateEvent());
+                          },
+                          child: Text(
+                            'Event',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: Constants.kDefaultPadding),
+                            primary: Constants.kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -22,6 +22,9 @@ part './main/MainTabPage.dart';
 part './main/HomePage.dart';
 part './main/ListPage.dart';
 
-part 'main/CreatePage.dart';
 part 'main/ClassDetailPage.dart';
 part 'main/NotificationsPage.dart';
+
+part 'create/CreateKelas.dart';
+part 'create/CreateTask.dart';
+part 'create/CreateEvent.dart';

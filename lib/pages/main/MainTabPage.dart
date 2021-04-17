@@ -6,13 +6,17 @@ class MainTabPage extends StatefulWidget {
 }
 
 class _MainTabPageState extends State<MainTabPage> {
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  final ScreenController _scrc = ScreenController.to;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  final ScreenController _screenc = ScreenController.to;
+  final KelasController _kelasc = KelasController.to;
 
   Widget _widgetOptions(BuildContext context) {
     return Obx(() {
-      switch (_scrc.tabIndex.value) {
+      switch (_screenc.tabIndex.value) {
         case 0:
           return HomePage();
         case 1:
@@ -24,6 +28,27 @@ class _MainTabPageState extends State<MainTabPage> {
 
   void openDrawer() {
     _scaffoldKey.currentState.openDrawer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _getKelas().whenComplete(() => {});
+    _getTask().whenComplete(() => {});
+  }
+
+  Future _getKelas() async {
+    await _kelasc.getKelas(context);
+  }
+
+  Future _getTask() async {
+    await _kelasc.getTask(context);
   }
 
   @override
@@ -61,22 +86,19 @@ class _MainTabPageState extends State<MainTabPage> {
       drawer: CustomDrawer(
         context: context,
         moreClassOnTap: () {
-          _scrc.onTabTapped(1);
+          _screenc.onTabTapped(1);
         },
       ),
-      body: _widgetOptions(context),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'main-tab',
+        tooltip: 'Create kelas',
         child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreatePage(),
-            ),
-          );
+        onPressed: () async {
+          Get.to(CreateKelas());
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: _widgetOptions(context),
       bottomNavigationBar: Obx(() {
         return BottomNavigationBar(
           elevation: 0,
@@ -90,10 +112,10 @@ class _MainTabPageState extends State<MainTabPage> {
               label: 'Task',
             ),
           ],
-          currentIndex: _scrc.tabIndex.value,
+          currentIndex: _screenc.tabIndex.value,
           selectedItemColor: Constants.kPrimaryColor,
           unselectedItemColor: Colors.black,
-          onTap: (index) => _scrc.onTabTapped(index),
+          onTap: (index) => _screenc.onTabTapped(index),
         );
       }),
     );
@@ -142,7 +164,7 @@ class _MainTabPageState extends State<MainTabPage> {
                       'Username',
                       style: Theme.of(context).textTheme.caption,
                     ),
-                    TextField(
+                    TextFormField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(

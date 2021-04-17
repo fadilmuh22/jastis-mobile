@@ -33,7 +33,7 @@ class AuthApi {
       });
       response = ResponseModel.fromJson(result.data);
       if (response.success) {
-        response.data = UserModel.fromJson(result.data['user']);
+        response.data = UserModel.fromJson(result.data['data']);
         JastisApi.setAuthToken(response.token);
       }
     } on DioError catch (e) {
