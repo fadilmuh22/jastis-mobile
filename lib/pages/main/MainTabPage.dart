@@ -14,15 +14,20 @@ class _MainTabPageState extends State<MainTabPage> {
   final ScreenController _screenc = ScreenController.to;
   final KelasController _kelasc = KelasController.to;
 
-  KelasModel kelas;
-
   final _formKey = GlobalKey<FormState>();
 
   Future _join(context) async {
     if (_formKey.currentState.validate()) {
-      ResponseModel response = await _kelasc.joinKelas(context, kelas);
+      ResponseModel response = await _kelasc.joinKelas(context);
       if (response.success) {
         Navigator.pop(context);
+
+        Get.snackbar(
+          'Success',
+          'Success on joinKelas',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 7),
+        );
       }
     }
   }
@@ -191,6 +196,7 @@ class _MainTabPageState extends State<MainTabPage> {
                           filled: true,
                           fillColor: Color(0xFFE5E5E5),
                         ),
+                        style: Theme.of(context).textTheme.caption,
                       )
                     ],
                   ),

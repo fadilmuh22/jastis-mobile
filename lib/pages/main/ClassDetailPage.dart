@@ -13,6 +13,7 @@ class ClassDetailPage extends StatefulWidget {
 }
 
 class _ClassDetailPageState extends State<ClassDetailPage> {
+  final AuthController _auth = AuthController.to;
   final CreateController _createc = CreateController.to;
   final KelasController _kelasc = KelasController.to;
 
@@ -36,7 +37,8 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
         Get.to(() => CreateKelas(kelas: widget.kelas));
         break;
       case 'Leave':
-        var response = await _kelasc.deleteKelas(context, widget.kelas);
+        var response = await _kelasc.leaveKelas(
+            context, widget.kelas, _auth.user.value.id);
         if (response.success) {
           Get.back();
         }

@@ -69,7 +69,8 @@ class _ListPageState extends State<ListPage>
         Get.to(() => CreateKelas(kelas: kelas));
         break;
       case 'Leave':
-        var response = await _kelasc.deleteKelas(context, kelas);
+        var response =
+            await _kelasc.leaveKelas(context, kelas, _auth.user.value.id);
         if (response.success) {
           Get.back();
         }
@@ -101,7 +102,6 @@ class _ListPageState extends State<ListPage>
         tooltip: 'Refresh ${['kelas', 'tugas', 'event'][_tabIndex]}',
         child: Icon(Icons.refresh),
         onPressed: () async {
-          print('fadil');
           switch (_tabIndex) {
             case 0:
               await _kelasc.getKelas(context);

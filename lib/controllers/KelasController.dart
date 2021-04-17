@@ -143,23 +143,20 @@ class KelasController extends GetxController {
     return response;
   }
 
-  Future<ResponseModel> joinKelas(
-      BuildContext context, KelasModel kelas) async {
+  Future<ResponseModel> joinKelas(BuildContext context) async {
     ResponseModel response = ResponseModel();
     OverlayScreen().show(context);
     try {
-      response = await KelasApi.joinKelas(kelas);
+      KelasModel join = KelasModel(
+        code: codeController.text.trim(),
+        userId: _auth.user.value.id,
+      );
+      response = await KelasApi.joinKelas(join);
 
       if (response.success) {
-        Get.snackbar(
-          'Success',
-          'Success on joinKelas',
-          snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 7),
-        );
       } else {}
     } catch (error) {
-      // OverlayScreen().pop();
+      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on joinKelas',
@@ -169,8 +166,69 @@ class KelasController extends GetxController {
         colorText: Colors.white,
       );
     } finally {
-      Get.back();
-      Get.back();
+      OverlayScreen().pop();
+    }
+
+    return response;
+  }
+
+  Future<ResponseModel> leaveKelas(
+      BuildContext context, KelasModel kelas, String userId) async {
+    ResponseModel response = ResponseModel();
+
+    bool delete = await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Apakah anda yakin?'),
+              content: Text(
+                'Semua record anda di kelas ini akan dihapus secara permanen',
+                style: Theme.of(context)
+                    .textTheme
+                    .caption
+                    .copyWith(color: Colors.red),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('No'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: new Text('Yes'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (delete) {
+      OverlayScreen().show(context);
+      try {
+        response = await KelasApi.leaveKelas(kelas, userId);
+
+        if (response.success) {
+          Get.snackbar(
+            'Success',
+            'Success on deleteKelas',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: Duration(seconds: 7),
+          );
+        } else {}
+      } catch (error) {
+        OverlayScreen().pop();
+        Get.snackbar(
+          'Error',
+          'Error on deleteKelas',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 7),
+          backgroundColor: Colors.red.withOpacity(.6),
+          colorText: Colors.white,
+        );
+      } finally {
+        OverlayScreen().pop();
+      }
     }
 
     return response;

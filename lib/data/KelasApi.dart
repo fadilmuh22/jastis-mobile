@@ -84,6 +84,27 @@ class KelasApi {
     return response;
   }
 
+  static Future<ResponseModel> leaveKelas(
+      KelasModel kelas, String userId) async {
+    ResponseModel response;
+    try {
+      var result = await JastisApi.dio.delete(
+        '/user/$userId/kelas',
+        data: {
+          'code': kelas.code,
+        },
+      );
+      response = ResponseModel.fromJson(result.data);
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        response = ResponseModel.fromJson(e.response.data);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
   static Future<ResponseModel> createTask(TaskModel task) async {
     ResponseModel response;
     try {
