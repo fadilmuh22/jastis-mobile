@@ -182,7 +182,7 @@ class KelasController extends GetxController {
             return AlertDialog(
               title: Text('Apakah anda yakin?'),
               content: Text(
-                'Semua record anda di kelas ini akan dihapus secara permanen',
+                'Anda tidak akan terhubung lagi dengan kelas ini',
                 style: Theme.of(context)
                     .textTheme
                     .caption
@@ -211,7 +211,7 @@ class KelasController extends GetxController {
         if (response.success) {
           Get.snackbar(
             'Success',
-            'Success on deleteKelas',
+            'Success on leaveKelas',
             snackPosition: SnackPosition.BOTTOM,
             duration: Duration(seconds: 7),
           );
@@ -220,7 +220,7 @@ class KelasController extends GetxController {
         OverlayScreen().pop();
         Get.snackbar(
           'Error',
-          'Error on deleteKelas',
+          'Error on leaveKelas',
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 7),
           backgroundColor: Colors.red.withOpacity(.6),
