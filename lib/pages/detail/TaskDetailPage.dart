@@ -14,7 +14,6 @@ class TaskDetailPage extends StatefulWidget {
 
 class _TaskDetailPageState extends State<TaskDetailPage> {
   final AuthController _auth = AuthController.to;
-  final CreateController _createc = CreateController.to;
   final KelasController _kelasc = KelasController.to;
 
   final _formSubmitKey = GlobalKey<FormState>();

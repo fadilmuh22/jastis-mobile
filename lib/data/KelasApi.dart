@@ -268,7 +268,7 @@ class KelasApi {
     ResponseModel response;
     try {
       var result = await JastisApi.dio.put(
-        '/task/${sentTaskId}/score',
+        '/task/$sentTaskId/score',
         data: {
           'score': score,
         },

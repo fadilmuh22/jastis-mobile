@@ -9,7 +9,6 @@ class _LoginPageState extends State<LoginPage> {
   final store = GetStorage();
   final _formKey = GlobalKey<FormState>();
 
-  final _formKeys = GlobalKey<FormState>();
   final AuthController _auth = AuthController.to;
 
   bool _passwordVisible = false;

@@ -14,7 +14,6 @@ class ClassDetailPage extends StatefulWidget {
 
 class _ClassDetailPageState extends State<ClassDetailPage> {
   final AuthController _auth = AuthController.to;
-  final CreateController _createc = CreateController.to;
   final KelasController _kelasc = KelasController.to;
   final ScreenController _screenc = ScreenController.to;
 
@@ -144,6 +143,28 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
             Text(
               '${widget.kelas.desc}',
               style: Theme.of(context).textTheme.subtitle1,
+            ),
+            SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Clipboard.setData(
+                            new ClipboardData(text: "${widget.kelas.code}"))
+                        .then((value) {
+                      Get.snackbar(
+                        'Berhasil',
+                        'Kode telah di salin',
+                      );
+                    });
+                  },
+                  child: Text(
+                    'Kode untuk join : ${widget.kelas.code}',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
