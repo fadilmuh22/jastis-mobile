@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -42,28 +44,32 @@ void main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Jakarta'));
 
-  await initNotifications(flutterLocalNotificationsPlugin);
+  try {
+    await initNotifications(flutterLocalNotificationsPlugin);
 
-  // await flutterLocalNotificationsPlugin.zonedSchedule(
-  //   0,
-  //   'scheduled title',
-  //   'scheduled body',
-  //   tz.TZDateTime.now(tz.local).add(const Duration(seconds: 15)),
-  //   const NotificationDetails(
-  //     android: AndroidNotificationDetails(
-  //       'your channel id',
-  //       'your channel name',
-  //       'your channel description',
-  //     ),
-  //   ),
-  //   androidAllowWhileIdle: true,
-  //   uiLocalNotificationDateInterpretation:
-  //       UILocalNotificationDateInterpretation.absoluteTime,
-  // );
+    // await flutterLocalNotificationsPlugin.zonedSchedule(
+    //   0,
+    //   'scheduled title',
+    //   'scheduled body',
+    //   tz.TZDateTime.now(tz.local).add(const Duration(seconds: 15)),
+    //   const NotificationDetails(
+    //     android: AndroidNotificationDetails(
+    //       'your channel id',
+    //       'your channel name',
+    //       'your channel description',
+    //     ),
+    //   ),
+    //   androidAllowWhileIdle: true,
+    //   uiLocalNotificationDateInterpretation:
+    //       UILocalNotificationDateInterpretation.absoluteTime,
+    // );
 
-  await Firebase.initializeApp();
-  await PushNotificationsManager().init();
-  FirebaseMessaging.onMessage.listen(_firebaseMessagingBackgroundHandler);
+    await Firebase.initializeApp();
+    await PushNotificationsManager().init();
+    FirebaseMessaging.onMessage.listen(_firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    log(e);
+  }
 
   await GetStorage.init();
 

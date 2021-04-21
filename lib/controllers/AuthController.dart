@@ -148,9 +148,6 @@ class AuthController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
         duration: Duration(seconds: 2),
       );
-    } finally {
-      await Future.delayed(Duration(seconds: 2))
-          .then((value) => OverlayScreen().pop());
     }
 
     return response;
