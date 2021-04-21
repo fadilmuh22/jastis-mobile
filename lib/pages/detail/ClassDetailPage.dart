@@ -16,25 +16,35 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
   final AuthController _auth = AuthController.to;
   final CreateController _createc = CreateController.to;
   final KelasController _kelasc = KelasController.to;
+  final ScreenController _screenc = ScreenController.to;
 
   @override
   void initState() {
     super.initState();
 
-    _createc.selectedKelas.value = widget.kelas;
+    Future.delayed(Duration.zero, () async {
+      _kelasTask();
+    });
+  }
+
+  Future _kelasTask() async {
+    await _kelasc.kelasTask(context, widget.kelas);
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    _createc.selectedKelas.value = null;
   }
 
   void _onAppBarActions(String choice) async {
     switch (choice) {
       case 'Edit':
-        Get.to(() => CreateKelas(kelas: widget.kelas));
+        bool back =
+            await Get.to(() => CreateKelas(kelas: widget.kelas)) ?? false;
+
+        if (back) {
+          Get.back();
+        }
         break;
       case 'Leave':
         var response = await _kelasc.leaveKelas(
@@ -48,7 +58,6 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
         if (response.success) {
           Get.back();
           Get.back();
-          _kelasc.getKelas(context);
         }
         break;
       default:
@@ -101,12 +110,14 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
         ],
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          OverlayScreen().show(context, identifier: 'modal-create');
-        },
-      ),
+      floatingActionButton: widget.kelas.role == 'murid'
+          ? Container()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () {
+                Get.to(() => CreateTask(kelas: widget.kelas));
+              },
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: _classDetailListView(context),
     );
@@ -176,95 +187,73 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
           ],
         ),
         SizedBox(height: 31),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading: Card(
-                color: Color(0xFFFAFAFA),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(7.0),
-                  child: Icon(
-                    Icons.ondemand_video,
-                    color: Constants.kPrimaryColor,
-                    size: 20,
-                  ),
-                ),
-              ),
-              title: Text(
-                '1 Hour Video',
-                style: Theme.of(context).textTheme.headline2.copyWith(
-                      fontSize: 11,
+        _listKelasTask(context),
+      ],
+    );
+  }
+
+  Widget _listKelasTask(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(() {
+          if (_kelasc.isLoadingTask.value) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return _kelasc.listTaskKelas.value == null
+              ? Container(
+                  height: 36,
+                  child: Center(
+                    child: Text(
+                      'Masih belum ada tugas di kelas ini',
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
-              ),
-              subtitle: Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                style: Theme.of(context).textTheme.subtitle2,
-              ),
-            ),
-            ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading: Card(
-                color: Color(0xFFFAFAFA),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(7.0),
-                  child: Icon(
-                    Icons.article,
-                    color: Constants.kPrimaryColor,
-                    size: 20,
                   ),
-                ),
-              ),
-              title: Text(
-                '3 Article',
-                style: Theme.of(context).textTheme.headline2.copyWith(
-                      fontSize: 11,
+                )
+              : ListTile(
+                  onTap: () {
+                    var lt = _kelasc.listTaskKelas.value.map((data) {
+                      data.kelas = widget.kelas;
+                      return data;
+                    }).toList();
+
+                    _screenc.mainTabIndex.value = 1;
+                    _screenc.listPageTabIndex.value = 1;
+                    _kelasc.listTask.value = lt;
+
+                    Get.back();
+                    Get.back();
+                  },
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: Card(
+                    color: Color(0xFFFAFAFA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9),
                     ),
-              ),
-              subtitle: Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                style: Theme.of(context).textTheme.subtitle2,
-              ),
-            ),
-            ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading: Card(
-                color: Color(0xFFFAFAFA),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(7.0),
-                  child: Icon(
-                    Icons.arrow_circle_down,
-                    color: Constants.kPrimaryColor,
-                    size: 20,
+                    child: Padding(
+                      padding: EdgeInsets.all(7.0),
+                      child: Icon(
+                        Icons.assignment,
+                        color: Constants.kPrimaryColor,
+                        size: 20,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              title: Text(
-                '5 Download Resource',
-                style: Theme.of(context).textTheme.headline2.copyWith(
-                      fontSize: 11,
-                    ),
-              ),
-              subtitle: Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                style: Theme.of(context).textTheme.subtitle2,
-              ),
-            ),
-          ],
-        ),
+                  title: Text(
+                    '${_kelasc.listTaskKelas.value.length} total tugas',
+                    style: Theme.of(context).textTheme.headline2.copyWith(
+                          fontSize: 11,
+                        ),
+                  ),
+                  subtitle: Text(
+                    'Klik untuk lebih lengkap',
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                );
+        }),
       ],
     );
   }

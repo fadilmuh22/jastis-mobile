@@ -7,19 +7,19 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage>
     with SingleTickerProviderStateMixin {
-  int _tabIndex = 0;
   TabController _tabController;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
   final AuthController _auth = AuthController.to;
   final KelasController _kelasc = KelasController.to;
+  final ScreenController _screenc = ScreenController.to;
 
   UserModel _user;
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
 
     _user = _auth.user.value;
@@ -34,9 +34,7 @@ class _ListPageState extends State<ListPage>
 
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
-      setState(() {
-        _tabIndex = _tabController.index;
-      });
+      _screenc.listPageTabIndex.value = _tabController.index;
     }
   }
 
@@ -71,15 +69,9 @@ class _ListPageState extends State<ListPage>
       case 'Leave':
         var response =
             await _kelasc.leaveKelas(context, kelas, _auth.user.value.id);
-        if (response.success) {
-          Get.back();
-        }
         break;
       case 'Delete':
         var response = await _kelasc.deleteKelas(context, kelas);
-        if (response.success) {
-          Get.back();
-        }
         break;
       default:
     }
@@ -93,24 +85,51 @@ class _ListPageState extends State<ListPage>
     }
   }
 
+  void _onTaskAction(String action, TaskModel task) async {
+    switch (action) {
+      case 'Edit':
+        Get.to(() => CreateTask(task: task));
+        break;
+      case 'Selesai':
+        var response = await _kelasc.deleteTask(context, task);
+        break;
+      case 'Delete':
+        var response = await _kelasc.deleteTask(context, task);
+        break;
+      default:
+    }
+  }
+
+  Set<String> _getTaskAction(TaskModel task) {
+    if (task.userId != _auth.user.value.id) {
+      return {'Selesai'};
+    } else {
+      return {'Edit', 'Delete'};
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         heroTag: 'list-page',
-        tooltip: 'Refresh ${['kelas', 'tugas', 'event'][_tabIndex]}',
+        tooltip: 'Refresh ${[
+          'kelas',
+          'tugas',
+          'event'
+        ][_screenc.listPageTabIndex.value]}',
         child: Icon(Icons.refresh),
         onPressed: () async {
-          switch (_tabIndex) {
+          switch (_screenc.listPageTabIndex.value) {
             case 0:
-              await _kelasc.getKelas(context);
+              _kelasc.getKelas(context);
               break;
             case 1:
-              await _kelasc.getTask(context);
+              _kelasc.getTask(context);
               break;
             case 2:
-              await _kelasc.getKelas(context);
+              _kelasc.getKelas(context);
               break;
             default:
           }
@@ -145,21 +164,21 @@ class _ListPageState extends State<ListPage>
               tabs: [
                 Tab(text: 'Class'),
                 Tab(text: 'Task'),
-                Tab(text: 'Event'),
               ],
             ),
           ),
         ),
-        Container(
-          padding: EdgeInsets.only(
-            top: 20,
-          ),
-          child: [
-            _listClassTab(context),
-            _listTaskTab(context),
-            _listEventTab(context),
-          ][_tabIndex],
-        ),
+        Obx(() {
+          return Container(
+            padding: EdgeInsets.only(
+              top: 20,
+            ),
+            child: [
+              _listClassTab(context),
+              _listTaskTab(context),
+            ][_screenc.listPageTabIndex.value],
+          );
+        }),
       ],
     );
   }
@@ -315,7 +334,9 @@ class _ListPageState extends State<ListPage>
 
   Widget listTileTask(BuildContext context, TaskModel task) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Get.to(() => TaskDetailPage(task: task));
+      },
       child: Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Card(
@@ -327,7 +348,7 @@ class _ListPageState extends State<ListPage>
             decoration: BoxDecoration(
               border: Border(
                 left: BorderSide(
-                  color: Constants.kPrimaryColor,
+                  color: Color(int.parse('0xFF${task.kelas.color}')),
                   width: 3,
                 ),
               ),
@@ -355,11 +376,26 @@ class _ListPageState extends State<ListPage>
                     ],
                   ),
                 ),
-                IconButton(
-                  constraints: BoxConstraints(),
+                PopupMenuButton<String>(
                   padding: EdgeInsets.zero,
-                  icon: Icon(Icons.more_vert),
-                  onPressed: () {},
+                  onSelected: (String action) {
+                    _onTaskAction(action, task);
+                  },
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.black,
+                  ),
+                  itemBuilder: (BuildContext context) {
+                    return _getTaskAction(task).map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(
+                          choice,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      );
+                    }).toList();
+                  },
                 ),
               ],
             ),

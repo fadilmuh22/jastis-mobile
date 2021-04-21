@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         tooltip: 'Refresh home page',
         child: Icon(Icons.refresh),
         onPressed: () async {
-          await _kelasc.getTask(context);
+          _kelasc.getTask(context);
         },
       ),
       body: _homeListView(),
@@ -155,58 +155,63 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _taskListViewItem(BuildContext context, TaskModel task) {
-    return SizedBox(
-      width: 150,
-      height: 240,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  child: Image.network(
-                    'https://placeimg.com/130/169/tech',
-                    width: 130,
-                    height: 169,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        '${task.title}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF5D5454),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => TaskDetailPage(task: task));
+      },
+      child: SizedBox(
+        width: 150,
+        height: 240,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    child: Image.network(
+                      'https://placeimg.com/130/169/tech',
+                      width: 130,
+                      height: 169,
                     ),
-                  ],
-                ),
-                Text(
-                  '${task.dateStart}',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Color.fromRGBO(223, 87, 83, 0.87),
                   ),
-                ),
-                Text(
-                  '${task.dateEnd}',
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              ],
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          '${task.title}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF5D5454),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '${task.dateStart}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(223, 87, 83, 0.87),
+                    ),
+                  ),
+                  Text(
+                    '${task.dateEnd}',
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

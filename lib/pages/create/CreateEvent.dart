@@ -5,34 +5,19 @@ class CreateEvent extends StatefulWidget {
   _CreateEventState createState() => _CreateEventState();
 }
 
-class _CreateEventState extends State<CreateEvent>
-    with SingleTickerProviderStateMixin {
+class _CreateEventState extends State<CreateEvent> {
   final CreateController _createc = CreateController.to;
 
   final _formKey = GlobalKey<FormState>();
 
-  int _tabIndex = 0;
-  TabController _tabController;
-
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(_handleTabSelection);
     super.initState();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     super.dispose();
-  }
-
-  _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        _tabIndex = _tabController.index;
-      });
-    }
   }
 
   void _onCancel() {
@@ -41,18 +26,24 @@ class _CreateEventState extends State<CreateEvent>
   }
 
   Future _createEvent() async {
-    if (_formKey.currentState.validate() &&
-        _createc.taskForm.value.date.text.isEmpty) {
+    if (_formKey.currentState.validate()) {
       ResponseModel response = await _createc.createEvent(context);
       if (response.success) {
         Get.snackbar(
           'Success',
           'Success creating event',
           snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 7),
+          duration: Duration(seconds: 2),
         );
+        await Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.pop(context));
       }
     }
+  }
+
+  void _onDate(String value) {
+    _createc.eventForm.value.selectedDate = DateTime.parse(value);
+    _createc.eventForm.value.date.text = value;
   }
 
   @override
@@ -121,39 +112,23 @@ class _CreateEventState extends State<CreateEvent>
                 'Due',
                 style: Theme.of(context).textTheme.caption,
               ),
-              GestureDetector(
-                onTap: () => selectDate(context, _createc.eventForm.value),
-                child: TextFormField(
-                  style: Theme.of(context).textTheme.caption,
-                  enabled: false,
-                  controller: _createc.eventForm.value.date,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Color(0xFFE5E5E5),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Due can\'t be empty';
-                    }
-                  },
-                ),
+              DateTimePicker(
+                type: DateTimePickerType.dateTimeSeparate,
+                dateMask: 'd MMM, yyyy',
+                initialValue: _createc.eventForm.value.date.text,
+                firstDate: DateTime.now(),
+                lastDate: DateTime(DateTime.now().year + 1),
+                icon: Icon(Icons.event),
+                dateLabelText: 'Date',
+                timeLabelText: "Hour",
+                onChanged: (val) => _onDate(val),
+                onSaved: (val) => _onDate(val),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Date can\'t be empty';
+                  }
+                },
               ),
-              Obx(() {
-                if (_createc.eventForm.value.date.text.isEmpty)
-                  return Text(
-                    'Due can\'t be empty',
-                    style: Theme.of(context).textTheme.caption.copyWith(
-                          color: Colors.red,
-                          fontSize: 12,
-                        ),
-                  );
-                return Container();
-              }),
             ],
           ),
           SizedBox(height: 30),

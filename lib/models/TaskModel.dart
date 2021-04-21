@@ -13,6 +13,7 @@ class TaskModel {
     this.updatedAt,
     this.kelas,
     this.users,
+    this.data,
   });
 
   String id;
@@ -26,6 +27,7 @@ class TaskModel {
   DateTime updatedAt;
   KelasModel kelas;
   UserModel users;
+  List data;
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
         id: json["_id"],
@@ -33,12 +35,17 @@ class TaskModel {
         kelasId: json["kelas_id"],
         title: json["title"],
         desc: json["desc"],
-        dateStart: DateTime.parse(json["date_start"]),
-        dateEnd: DateTime.parse(json["date_end"]),
+        dateStart: json["date_start"] == null
+            ? null
+            : DateTime.parse(json["date_start"]),
+        dateEnd:
+            json["date_end"] == null ? null : DateTime.parse(json["date_end"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        kelas: KelasModel.fromJson(json["kelas"]),
-        users: UserModel.fromJson(json["users"]),
+        kelas:
+            json['kelas'] == null ? null : KelasModel.fromJson(json["kelas"]),
+        users: json['users'] == null ? null : UserModel.fromJson(json["users"]),
+        data: json['data'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -51,7 +58,8 @@ class TaskModel {
         "date_end": dateEnd.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-        "kelas": kelas.toJson(),
-        "users": users.toJson(),
+        "kelas": kelas == null ? null : kelas.toJson(),
+        "users": users == null ? null : users.toJson(),
+        "data": data,
       };
 }

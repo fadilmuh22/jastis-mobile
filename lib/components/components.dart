@@ -17,6 +17,6 @@ void selectDate(BuildContext context, var form) async {
   );
   if (picked != null && picked != form.selectedDate) {
     form.selectedDate = picked;
-    form.date.text = picked.toIso8601String();
+    form.date.text = picked;
   }
 }

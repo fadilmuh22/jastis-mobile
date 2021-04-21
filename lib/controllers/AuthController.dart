@@ -52,15 +52,15 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
-      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on signin',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
@@ -87,15 +87,15 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
-      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on register',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
@@ -119,15 +119,15 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
-      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on logout',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
@@ -154,15 +154,15 @@ class AuthController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
-      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on googleLogin',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;

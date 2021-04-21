@@ -8,26 +8,19 @@ class CreateTask extends StatefulWidget {
   }) : super(key: key);
 
   final TaskModel task;
-
   final KelasModel kelas;
 
   @override
   _CreateTaskState createState() => _CreateTaskState();
 }
 
-class _CreateTaskState extends State<CreateTask>
-    with SingleTickerProviderStateMixin {
+class _CreateTaskState extends State<CreateTask> {
   final CreateController _createc = CreateController.to;
 
   final _formKey = GlobalKey<FormState>();
 
-  int _tabIndex = 0;
-  TabController _tabController;
-
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(_handleTabSelection);
     super.initState();
 
     if (widget.task != null) {
@@ -40,16 +33,7 @@ class _CreateTaskState extends State<CreateTask>
 
   @override
   void dispose() {
-    _tabController.dispose();
     super.dispose();
-  }
-
-  _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        _tabIndex = _tabController.index;
-      });
-    }
   }
 
   void _onCancel() {
@@ -58,20 +42,47 @@ class _CreateTaskState extends State<CreateTask>
   }
 
   Future _createTask() async {
-    assert(!(_formKey.currentState.validate() &&
-        _createc.taskForm.value.date.text.isEmpty));
     if (_formKey.currentState.validate() &&
-        _createc.taskForm.value.date.text.isEmpty) {
-      ResponseModel response = await _createc.createTask(context);
+        _createc.taskForm.value.date.text.isNotEmpty) {
+      ResponseModel response = await _createc.createTask(context, widget.kelas);
       if (response.success) {
         Get.snackbar(
           'Success',
           'Success creating task',
           snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 7),
+          duration: Duration(seconds: 2),
         );
+
+        await Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.pop(context));
       }
     }
+  }
+
+  Future _updateTask() async {
+    if (_formKey.currentState.validate()) {
+      ResponseModel response = await _createc.updateTask(
+        context,
+        widget.task.id,
+        widget.task.kelasId,
+      );
+      if (response.success) {
+        Get.snackbar(
+          'Success',
+          'Success updating task',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 2),
+        );
+
+        await Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.of(context).pop(true));
+      }
+    }
+  }
+
+  void _onDate(String value) {
+    _createc.taskForm.value.selectedDate = DateTime.parse(value);
+    _createc.taskForm.value.date.text = value;
   }
 
   @override
@@ -88,7 +99,7 @@ class _CreateTaskState extends State<CreateTask>
             padding: EdgeInsets.all(30),
             children: [
               Text(
-                'Create Tugas',
+                '${widget.task == null ? 'Create' : 'Update'} Tugas',
                 style: Theme.of(context).textTheme.headline1,
               ),
               SizedBox(height: 40),
@@ -140,42 +151,23 @@ class _CreateTaskState extends State<CreateTask>
                 'Due',
                 style: Theme.of(context).textTheme.caption,
               ),
-              GestureDetector(
-                onTap: () {
-                  selectDate(context, _createc.taskForm.value);
+              DateTimePicker(
+                type: DateTimePickerType.dateTimeSeparate,
+                dateMask: 'd MMM, yyyy',
+                initialValue: _createc.taskForm.value.date.text,
+                firstDate: DateTime.now(),
+                lastDate: DateTime(DateTime.now().year + 1),
+                icon: Icon(Icons.event),
+                dateLabelText: 'Date',
+                timeLabelText: "Hour",
+                onChanged: (val) => _onDate(val),
+                onSaved: (val) => _onDate(val),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Date can\'t be empty';
+                  }
                 },
-                child: TextFormField(
-                  style: Theme.of(context).textTheme.caption,
-                  enabled: false,
-                  controller: _createc.taskForm.value.date,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Color(0xFFE5E5E5),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Due can\'t be empty';
-                    }
-                  },
-                ),
               ),
-              Obx(() {
-                if (_createc.taskForm.value.date.text.isEmpty) {
-                  return Text(
-                    'Due can\'t be empty',
-                    style: Theme.of(context).textTheme.caption.copyWith(
-                          color: Colors.red,
-                          fontSize: 12,
-                        ),
-                  );
-                }
-                return Container();
-              }),
             ],
           ),
           SizedBox(height: 30),
@@ -221,9 +213,13 @@ class _CreateTaskState extends State<CreateTask>
               SizedBox(width: 11),
               ElevatedButton(
                 onPressed: () {
-                  _createTask();
+                  if (widget.task == null) {
+                    _createTask();
+                  } else {
+                    _updateTask();
+                  }
                 },
-                child: Text('Create'),
+                child: Text('${widget.task == null ? 'Create' : 'Update'}'),
                 style: ElevatedButton.styleFrom(
                   primary: Constants.kPrimaryColor,
                 ),

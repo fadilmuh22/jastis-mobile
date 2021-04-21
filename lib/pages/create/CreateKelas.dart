@@ -12,19 +12,13 @@ class CreateKelas extends StatefulWidget {
   _CreateKelasState createState() => _CreateKelasState();
 }
 
-class _CreateKelasState extends State<CreateKelas>
-    with SingleTickerProviderStateMixin {
+class _CreateKelasState extends State<CreateKelas> {
   final CreateController _createc = CreateController.to;
 
   final _formKey = GlobalKey<FormState>();
 
-  int _tabIndex = 0;
-  TabController _tabController;
-
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(_handleTabSelection);
     super.initState();
 
     if (widget.kelas != null) {
@@ -36,16 +30,7 @@ class _CreateKelasState extends State<CreateKelas>
 
   @override
   void dispose() {
-    _tabController.dispose();
     super.dispose();
-  }
-
-  _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        _tabIndex = _tabController.index;
-      });
-    }
   }
 
   void _onCancel() {
@@ -61,8 +46,10 @@ class _CreateKelasState extends State<CreateKelas>
           'Success',
           'Success creating kelas',
           snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 7),
+          duration: Duration(seconds: 2),
         );
+        await Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.pop(context));
       }
     }
   }
@@ -76,8 +63,11 @@ class _CreateKelasState extends State<CreateKelas>
           'Success',
           'Success updating kelas',
           snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 7),
+          duration: Duration(seconds: 2),
         );
+
+        await Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.of(context).pop(true));
       }
     }
   }

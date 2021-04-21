@@ -7,7 +7,6 @@ class MainTabPage extends StatefulWidget {
 
 class _MainTabPageState extends State<MainTabPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -26,7 +25,7 @@ class _MainTabPageState extends State<MainTabPage> {
           'Success',
           'Success on joinKelas',
           snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 7),
+          duration: Duration(seconds: 2),
         );
       }
     }
@@ -34,7 +33,7 @@ class _MainTabPageState extends State<MainTabPage> {
 
   Widget _widgetOptions(BuildContext context) {
     return Obx(() {
-      switch (_screenc.tabIndex.value) {
+      switch (_screenc.mainTabIndex.value) {
         case 0:
           return HomePage();
         case 1:
@@ -51,22 +50,21 @@ class _MainTabPageState extends State<MainTabPage> {
   @override
   void initState() {
     super.initState();
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+    // PushNotificationsManager().init();
 
-    _getKelas().whenComplete(() => {});
-    _getTask().whenComplete(() => {});
+    Future.delayed(Duration.zero, () async {
+      _getKelas();
+      _getTask();
+    });
   }
 
   Future _getKelas() async {
-    await _kelasc.getKelas(context);
+    _kelasc.getKelas(context);
   }
 
   Future _getTask() async {
-    await _kelasc.getTask(context);
+    _kelasc.getTask(context);
   }
 
   @override
@@ -130,7 +128,7 @@ class _MainTabPageState extends State<MainTabPage> {
               label: 'Task',
             ),
           ],
-          currentIndex: _screenc.tabIndex.value,
+          currentIndex: _screenc.mainTabIndex.value,
           selectedItemColor: Constants.kPrimaryColor,
           unselectedItemColor: Colors.black,
           onTap: (index) => _screenc.onTabTapped(index),
@@ -205,7 +203,9 @@ class _MainTabPageState extends State<MainTabPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.back();
+                        },
                         child: Text(
                           'Cancel',
                           style: Theme.of(context).textTheme.caption.copyWith(

@@ -4,7 +4,7 @@ class CreateController extends GetxController {
   final store = GetStorage();
   static CreateController to = Get.find();
   final AuthController _auth = AuthController.to;
-  var selectedKelas = KelasModel().obs;
+  final KelasController _kelasc = KelasController.to;
 
   var kelasForm = KelasFormModel().obs;
   var taskForm = TaskFormModel().obs;
@@ -46,6 +46,7 @@ class CreateController extends GetxController {
 
       if (response.success) {
         clearFieldController();
+        _kelasc.getKelas(context);
       } else {
         valMsg.value = response.message;
       }
@@ -54,10 +55,11 @@ class CreateController extends GetxController {
         'Error',
         'Error on createKelas',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
@@ -80,24 +82,27 @@ class CreateController extends GetxController {
 
       if (response.success) {
         clearFieldController();
+        _kelasc.getKelas(context);
       } else {
         valMsg.value = response.message;
       }
     } catch (error) {
       Get.snackbar(
         'Error',
-        'Error on createKelas',
+        'Error on updateKelas',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
   }
 
-  Future<ResponseModel> createTask(BuildContext context) async {
+  Future<ResponseModel> createTask(
+      BuildContext context, KelasModel kelas) async {
     ResponseModel response = ResponseModel();
 
     OverlayScreen().show(context);
@@ -106,7 +111,7 @@ class CreateController extends GetxController {
         title: taskForm.value.title.text.trim(),
         desc: taskForm.value.desc.text.trim(),
         dateEnd: taskForm.value.selectedDate,
-        kelasId: selectedKelas.value.id,
+        kelasId: kelas.id,
         userId: _auth.user.value.id,
       );
 
@@ -114,19 +119,58 @@ class CreateController extends GetxController {
 
       if (response.success) {
         clearFieldController();
+        _kelasc.getTask(context);
       } else {
         valMsg.value = response.message;
       }
     } catch (error) {
-      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on createTask',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
+    }
+
+    return response;
+  }
+
+  Future<ResponseModel> updateTask(
+      BuildContext context, String id, String kelasId) async {
+    ResponseModel response = ResponseModel();
+
+    OverlayScreen().show(context);
+    try {
+      TaskModel task = TaskModel(
+        id: id,
+        title: taskForm.value.title.text.trim(),
+        desc: taskForm.value.desc.text.trim(),
+        dateEnd: taskForm.value.selectedDate,
+        kelasId: kelasId,
+        userId: _auth.user.value.id,
+      );
+
+      response = await KelasApi.updateTask(task);
+
+      if (response.success) {
+        clearFieldController();
+        _kelasc.getTask(context);
+      } else {
+        valMsg.value = response.message;
+      }
+    } catch (error) {
+      Get.snackbar(
+        'Error',
+        'Error on updateTask',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 2),
+      );
+    } finally {
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
@@ -150,15 +194,15 @@ class CreateController extends GetxController {
         valMsg.value = response.message;
       }
     } catch (error) {
-      OverlayScreen().pop();
       Get.snackbar(
         'Error',
         'Error on createEvent',
         snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 7),
+        duration: Duration(seconds: 2),
       );
     } finally {
-      OverlayScreen().pop();
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
     }
 
     return response;
