@@ -115,13 +115,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 );
                               },
                             ),
-                            ListTile(
-                              dense: true,
-                              contentPadding: EdgeInsets.zero,
-                              leading: Icon(Icons.settings),
-                              title: Text('Settings'),
-                              onTap: () {},
-                            ),
+                            // ListTile(
+                            //   dense: true,
+                            //   contentPadding: EdgeInsets.zero,
+                            //   leading: Icon(Icons.settings),
+                            //   title: Text('Settings'),
+                            //   onTap: () {},
+                            // ),
                             SizedBox(height: 30),
                             TextButton(
                               onPressed: () async {

@@ -145,6 +145,28 @@ class _ClassDetailPageState extends State<ClassDetailPage> {
               '${widget.kelas.desc}',
               style: Theme.of(context).textTheme.subtitle1,
             ),
+            SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Clipboard.setData(
+                            new ClipboardData(text: "${widget.kelas.code}"))
+                        .then((value) {
+                      Get.snackbar(
+                        'Berhasil',
+                        'Kode telah di salin',
+                      );
+                    });
+                  },
+                  child: Text(
+                    'Kode untuk join : ${widget.kelas.code}',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         SizedBox(
