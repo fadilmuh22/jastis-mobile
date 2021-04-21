@@ -63,6 +63,27 @@ class AuthApi {
     return response;
   }
 
+  static Future<ResponseModel> setRegistration(String userId) async {
+    ResponseModel<UserModel> response;
+    try {
+      var token = PushNotificationsManager().token;
+      var result = await JastisApi.dio.post(
+        '/user/$userId/registration',
+        data: {
+          'registration_id': '$token',
+        },
+      );
+      response = ResponseModel.fromJson(result.data);
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        response = ResponseModel.fromJson(e.response.data);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return response;
+  }
+
   static Future<ResponseModel> googleLogin(String token) async {
     ResponseModel<UserModel> response;
     try {
@@ -70,6 +91,10 @@ class AuthApi {
         'token': token,
       });
       response = ResponseModel.fromJson(result.data);
+      if (response.success) {
+        response.data = UserModel.fromJson(result.data['data']);
+        JastisApi.setAuthToken(response.token);
+      }
     } on DioError catch (e) {
       if (e.response.statusCode == 401) {
         response = ResponseModel<UserModel>.fromJson(e.response.data);

@@ -180,7 +180,7 @@ class KelasApi {
     ResponseModel<List<TaskModel>> response;
     try {
       var result = await JastisApi.dio.get(
-        '/user/${user.id}/task',
+        '/user/${user.id}/task_act',
       );
       response = ResponseModel.fromJson(result.data);
       if (response.success && result.data['data'] != null) {

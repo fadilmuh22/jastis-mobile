@@ -79,7 +79,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 child: ListTile(
                                   dense: true,
                                   contentPadding: EdgeInsets.zero,
-                                  leading: CircleAvatar(),
+                                  leading: CircleAvatar(
+                                    backgroundImage: _user.avatar == null
+                                        ? null
+                                        : NetworkImage('${_user.avatar}'),
+                                  ),
                                   title: Text('${_user.name}'),
                                   subtitle: Text('${_user.email}'),
                                   onTap: () {},

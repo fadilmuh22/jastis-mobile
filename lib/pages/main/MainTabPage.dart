@@ -12,6 +12,7 @@ class _MainTabPageState extends State<MainTabPage> {
 
   final ScreenController _screenc = ScreenController.to;
   final KelasController _kelasc = KelasController.to;
+  final AuthController _auth = AuthController.to;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -51,9 +52,8 @@ class _MainTabPageState extends State<MainTabPage> {
   void initState() {
     super.initState();
 
-    // PushNotificationsManager().init();
-
     Future.delayed(Duration.zero, () async {
+      _auth.setRegistration(context);
       _getKelas();
       _getTask();
     });

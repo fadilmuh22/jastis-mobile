@@ -3,6 +3,9 @@ part of 'models.dart';
 class UserModel {
   UserModel({
     this.id,
+    this.avatar,
+    this.googleId,
+    this.registrationId,
     this.name,
     this.email,
     this.emailVerifiedAt,
@@ -13,6 +16,9 @@ class UserModel {
   });
 
   String id;
+  String avatar;
+  String googleId;
+  String registrationId;
   String name;
   String email;
   DateTime emailVerifiedAt;
@@ -24,6 +30,9 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json["_id"],
+      avatar: json["avatar"],
+      googleId: json["googleId"],
+      registrationId: json["registrationId"],
       name: json["name"],
       email: json["email"],
       emailVerifiedAt: json["email_verified_at"] == null
@@ -45,6 +54,9 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       "_id": id,
+      "avatar": avatar,
+      "google_id": googleId,
+      "registration_id": registrationId,
       "name": name,
       "email": email,
       "email_verified_at":

@@ -109,6 +109,7 @@ class AuthController extends GetxController {
       response = await AuthApi.logout();
 
       if (googleUser) {
+        googleUser = false;
         await _googleSignIn.signOut();
       }
 
@@ -133,6 +134,28 @@ class AuthController extends GetxController {
     return response;
   }
 
+  Future<ResponseModel> setRegistration(BuildContext context) async {
+    ResponseModel response = ResponseModel();
+    try {
+      response = await AuthApi.setRegistration(user.value.id);
+
+      if (response.success) {
+      } else {}
+    } catch (error) {
+      Get.snackbar(
+        'Error',
+        'Error on setRegistration',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 2),
+      );
+    } finally {
+      await Future.delayed(Duration(seconds: 2))
+          .then((value) => OverlayScreen().pop());
+    }
+
+    return response;
+  }
+
   Future<ResponseModel<UserModel>> googleLogin(BuildContext context) async {
     ResponseModel<UserModel> response = ResponseModel<UserModel>();
 
@@ -142,7 +165,7 @@ class AuthController extends GetxController {
     try {
       final result = await _googleSignIn.signIn();
       final ggAuth = await result.authentication;
-      // response = await AuthApi.googleLogin(ggAuth.accessToken);
+      response = await AuthApi.googleLogin(ggAuth.accessToken);
       if (response.success) {
         await store.write('token', response.token);
         await store.write('user', jsonEncode(response.data));
