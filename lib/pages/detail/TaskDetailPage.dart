@@ -74,9 +74,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
   }
 
   Set<String> _getTaskAction(TaskModel task) {
-    if (task.userId != _auth.user.value.id) {
-      return {'Selesai'};
-    } else {
+    if (task.userId == _auth.user.value.id) {
       return {'Edit', 'Delete'};
     }
   }

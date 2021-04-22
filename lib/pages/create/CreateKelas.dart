@@ -66,8 +66,9 @@ class _CreateKelasState extends State<CreateKelas> {
           duration: Duration(seconds: 2),
         );
 
-        await Future.delayed(Duration(seconds: 2))
-            .then((value) => Navigator.of(context).pop(true));
+        await Future.delayed(Duration(seconds: 2)).then((value) {
+          Navigator.of(context).pop(true);
+        });
       }
     }
   }

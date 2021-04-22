@@ -90,9 +90,6 @@ class _ListPageState extends State<ListPage>
       case 'Edit':
         Get.to(() => CreateTask(task: task));
         break;
-      case 'Selesai':
-        var response = await _kelasc.deleteTask(context, task);
-        break;
       case 'Delete':
         var response = await _kelasc.deleteTask(context, task);
         break;
@@ -101,9 +98,7 @@ class _ListPageState extends State<ListPage>
   }
 
   Set<String> _getTaskAction(TaskModel task) {
-    if (task.userId != _auth.user.value.id) {
-      return {'Selesai'};
-    } else {
+    if (task.userId == _auth.user.value.id) {
       return {'Edit', 'Delete'};
     }
   }
@@ -376,27 +371,27 @@ class _ListPageState extends State<ListPage>
                     ],
                   ),
                 ),
-                PopupMenuButton<String>(
-                  padding: EdgeInsets.zero,
-                  onSelected: (String action) {
-                    _onTaskAction(action, task);
-                  },
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Colors.black,
-                  ),
-                  itemBuilder: (BuildContext context) {
-                    return _getTaskAction(task).map((String choice) {
-                      return PopupMenuItem<String>(
-                        value: choice,
-                        child: Text(
-                          choice,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      );
-                    }).toList();
-                  },
-                ),
+                // PopupMenuButton<String>(
+                //   padding: EdgeInsets.zero,
+                //   onSelected: (String action) {
+                //     _onTaskAction(action, task);
+                //   },
+                //   icon: Icon(
+                //     Icons.more_vert,
+                //     color: Colors.black,
+                //   ),
+                //   itemBuilder: (BuildContext context) {
+                //     return _getTaskAction(task).map((String choice) {
+                //       return PopupMenuItem<String>(
+                //         value: choice,
+                //         child: Text(
+                //           choice,
+                //           style: Theme.of(context).textTheme.caption,
+                //         ),
+                //       );
+                //     }).toList();
+                //   },
+                // ),
               ],
             ),
           ),
